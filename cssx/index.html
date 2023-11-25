@@ -1,0 +1,68 @@
+<!-- W3hubs.com - Download Free Responsive Website Layout Templates designed on HTML5 CSS3,Bootstrap which are 100% Mobile friendly. w3Hubs all Layouts are responsive cross browser supported, best quality world class designs. -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Delete Modal In Bootstrap 4</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+ 
+  <style type="text/css">
+    img{
+    max-width: 30%;
+    }
+    .modal-header{
+    border-bottom: 0px solid;
+    }
+    h1,p{
+    padding: 20px;
+    }
+    p{
+    text-align: center;
+    }
+    .fa{
+    text-align: center;
+    font-size: 40px;
+    color: red;
+    }
+    .btn-primary{
+    margin: 20px auto;
+    display: block; 
+    }
+    .close{
+    cursor: pointer;
+    }
+  </style>
+  </head>
+  <body>
+    <!-- Button to Open the Modal -->
+    <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#myModal">
+    Open modal
+    </button>
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <!-- Modal body -->
+          <div class="modal-body text-center mb-5">
+            <img src="right.png" class="img-responsive">
+            <h1>Are You Sure?</h1>
+            <p>Do you really want to delete these records? This process cannot be undone.</p>
+            <div class="btn-group">
+              <button type="button" class="btn btn-secondary btn-lg mr-2 rounded-lg" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-danger btn-lg rounded-lg">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </body>
+</html>
