@@ -91,8 +91,8 @@ if ($_SESSION['id_teacher']) {
     <?php
     $num_exam_value1 = null;
     $num_exam_value2 = null;
-    $name_score_exam1 = [];
-    $name_score_exam2 = [];
+    $name_score_exam1 = null;
+    $name_score_exam2 = null;
     $score_series_exam = "";
     if (isset($_GET["id_subject"])) {
       $id_subject = $_GET["id_subject"];
