@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 session_start();
 if ($_SESSION['id_teacher']) {
@@ -10,9 +11,9 @@ if ($_SESSION['id_teacher']) {
   $result_teacher = mysqli_query($conn, $sql_teacher);
   $number = 1;
   while ($row_teacher = mysqli_fetch_array($result_teacher, MYSQLI_ASSOC)) {
-    $data_id =  $row_teacher['id_teacher'];
-    $data_id_teacher =  $row_teacher['id_teacher'];
-    $data_name_teacher_subject =  $row_teacher['name_teacher'];
+    $data_id = $row_teacher['id_teacher'];
+    $data_id_teacher = $row_teacher['id_teacher'];
+    $data_name_teacher_subject = $row_teacher['name_teacher'];
   }
   //echo  $data_id_teacher;
 } else {
@@ -20,8 +21,6 @@ if ($_SESSION['id_teacher']) {
   header("location:Login.php");
 }
 ?>
-
-<!DOCTYPE html>
 <html lang="en" style="font-size:100%">
 
 <head>
@@ -90,6 +89,10 @@ if ($_SESSION['id_teacher']) {
     </ul>
 
     <?php
+    $num_exam_value1 = null;
+    $num_exam_value2 = null;
+    $name_score_exam1 = [];
+    $name_score_exam2 = [];
     $score_series_exam = "";
     if (isset($_GET["id_subject"])) {
       $id_subject = $_GET["id_subject"];
@@ -105,24 +108,24 @@ if ($_SESSION['id_teacher']) {
     if (isset($_GET["id_series_exam"])) {
       $id_series_exam = $_GET["id_series_exam"];
       $list_series_exam = $_GET["l_list_series_exam"];
-
       // Notice: Undefined variable: list_series_exam in C:\xampp\htdocs\examination\Series_Exam_Manager.php on line 638
       $manager = "edit";
       $sql1 = "SELECT * FROM `manager_series_exam` WHERE id = $id_series_exam";
       $result1 = mysqli_query($conn, $sql1);
       $i = 1;
       while ($row1 = mysqli_fetch_array($result1, MYSQLI_ASSOC)) {
-        $series_exam_id =  $row1['id'];
-        $branch_id_series_exam =  $row1['branch_id_series_exam'];
-        $year_std_series_exam =  $row1['year_std_series_exam'];
-        $name_series_exam =  $row1['name_series_exam'];
-        $datetime_start_series_exam =  $row1['datetime_start_series_exam'];
-        $datetime_end_series_exam =  $row1['datetime_end_series_exam'];
+        $series_exam_id = $row1['id'];
+        $branch_id_series_exam = $row1['branch_id_series_exam'];
+        $year_std_series_exam = $row1['year_std_series_exam'];
+        $name_series_exam = $row1['name_series_exam'];
+        $datetime_start_series_exam = $row1['datetime_start_series_exam'];
+        $datetime_end_series_exam = $row1['datetime_end_series_exam'];
+        $auto_re_series_exam = $row1['auto_re_series_exam'];
 
-        $score_series_exam =  $row1['score_series_exam'];
-        $list_series_exam =  $row1['list_series_exam'];
-        $type_series_exam =  $row1['type_series_exam'];
-        $type_exam =  $row1['type_exam'];
+        $score_series_exam = $row1['score_series_exam'];
+        $list_series_exam = $row1['list_series_exam'];
+        $type_series_exam = $row1['type_series_exam'];
+        $type_exam = $row1['type_exam'];
 
         //$arr_list_series_exam = explode(',',$row1['list_series_exam']);
         //for ($i=0; $i < count($arr_list_series_exam); $i++) {
@@ -174,9 +177,8 @@ if ($_SESSION['id_teacher']) {
       $name_score_exam2 = null;
       $type_series_exam1 = null;
       $type_series_exam2 = null;
+      $auto_re_series_exam = 0;
     }
-
-
     ?>
     <div id="content-wrapper">
       <div class="container-fluid">
@@ -193,10 +195,10 @@ if ($_SESSION['id_teacher']) {
           $sql1 = "SELECT * FROM `manager_subject` WHERE id = $id_subject";
           $result1 = mysqli_query($conn, $sql1);
           while ($row1 = mysqli_fetch_array($result1, MYSQLI_ASSOC)) {
-            $id_subject =  $row1['id'];
-            $name_subject =  $row1['name_subject'];
-            $name_teacher_subject =  $row1['name_teacher_subject'];
-            $genre_subject =  $row1['genre_subject'];
+            $id_subject = $row1['id'];
+            $name_subject = $row1['name_subject'];
+            $name_teacher_subject = $row1['name_teacher_subject'];
+            $genre_subject = $row1['genre_subject'];
           }
           if ($genre_subject == 1) {
             $genre_subject_name = "ปวช";
@@ -204,7 +206,9 @@ if ($_SESSION['id_teacher']) {
             $genre_subject_name = "ปวส";
           }
           ?>
-          <li class="breadcrumb-item active"><?php echo $name_subject; ?></li>
+          <li class="breadcrumb-item active">
+            <?php echo $name_subject; ?>
+          </li>
         </ol>
 
         <!-- DataTables Example -->
@@ -285,7 +289,9 @@ if ($_SESSION['id_teacher']) {
                                 echo "selected";
                               }
                             }
-                            ?> value="<?php echo $branch_id; ?>"><?php echo $branch_name; ?></option>
+                            ?> value="<?php echo $branch_id; ?>">
+                      <?php echo $branch_name; ?>
+                    </option>
                   <?php } ?>
                 </select>
               </div>
@@ -314,7 +320,7 @@ if ($_SESSION['id_teacher']) {
 
 
               <!-- <div class="form-group">
-			<label>ชั้นปี/ห้องเรียน</label>
+      <label>ชั้นปี/ห้องเรียน</label>
       <div class="form-check" id="degree" >
 
       </div>
@@ -322,23 +328,21 @@ if ($_SESSION['id_teacher']) {
 
 
               <!---<div class="form-group">
-			<label>รหัสปีการศึกษา</label>
-			<select style="width:300px" name="year_std_series_exam" class="form-control"  >
-				<option value="">เลือกรหัสปีการศึกษา</option>
-				<?php
+      <label>รหัสปีการศึกษา</label>
+      <select style="width:300px" name="year_std_series_exam" class="form-control"  >
+        <option value="">เลือกรหัสปีการศึกษา</option>
+        <?php
         //$sql2 = "SELECT DISTINCT `year_std` FROM `manage_std` ORDER BY `manage_std`.`year_std` ASC";
         // $result2 = mysqli_query($conn, $sql2);
         //  while ($row2 = mysqli_fetch_array($result2,MYSQLI_ASSOC)) {
         //	$year_std = $row2['year_std'];
         ?>
-				<option <?php //if($manager=="edit"){if($year_std == $year_std_series_exam){echo "selected";}} 
+        <option <?php //if($manager=="edit"){if($year_std == $year_std_series_exam){echo "selected";}} 
                 ?> value="<?php //echo $year_std;
                           ?>"><?php //echo $year_std;
                               ?></option>
-				<? php // } 
-        ?>
-			</select>
-		</div>--->
+      </select>
+    </div>--->
 
 
 
@@ -349,19 +353,19 @@ if ($_SESSION['id_teacher']) {
                                                                                                                                           $dateStartCreate = date_create($datetime_start_series_exam);
 
                                                                                                                                           $TimeStartCreate = date_create($datetime_start_series_exam);
-                                                                                                                                          $dateY =  date_format($dateStartCreate, "Y") - 543;
-                                                                                                                                          $dateStart =  date_format($dateStartCreate, "d-m-$dateY");
-                                                                                                                                          $TimeStart =  date_format($TimeStartCreate, "H:i");
+                                                                                                                                          $dateY = date_format($dateStartCreate, "Y") - 543;
+                                                                                                                                          $dateStart = date_format($dateStartCreate, "d-m-$dateY");
+                                                                                                                                          $TimeStart = date_format($TimeStartCreate, "H:i");
                                                                                                                                           $Date_Time_Start = $dateStart . $TimeStart;
                                                                                                                                           $dateEndCreate = date_create($datetime_end_series_exam);
-                                                                                                                                          $dateYEnd =  date_format($dateEndCreate, "Y") - 543;
+                                                                                                                                          $dateYEnd = date_format($dateEndCreate, "Y") - 543;
                                                                                                                                           $TimeEndCreate = date_create($datetime_end_series_exam);
-                                                                                                                                          $dateEnd =  date_format($dateEndCreate, "d-m-$dateYEnd");
-                                                                                                                                          $TimeEnd =  date_format($TimeEndCreate, "H:i");
+                                                                                                                                          $dateEnd = date_format($dateEndCreate, "d-m-$dateYEnd");
+                                                                                                                                          $TimeEnd = date_format($TimeEndCreate, "H:i");
                                                                                                                                           $Date_Time_End = $dateEnd . $TimeEnd;
                                                                                                                                           if ($manager == "edit") {
                                                                                                                                             echo $Date_Time_Start . "," . $Date_Time_End;
-                                                                                                                                          }  ?>" />
+                                                                                                                                          } ?>" />
                   &nbsp; (ตัวอย่าง 01-01-2020 09:00,01-01-2020 09:30)
                 </div>
                 <!-- <?= $dateStart ?> -->
@@ -369,16 +373,31 @@ if ($_SESSION['id_teacher']) {
 
               <label>เลือกข้อสอบ</label>
               <div style="border-radius: 5px 5px 5px 5px;" class="card-header">
-                <input onclick="exam_type1()" <?php if ($type_series_exam1 == 1) {
-                                                echo "checked";
-                                              } ?> class="form-check-input ml-2" type="checkbox" name="type_series_exam1" id="ex_t1" value="1">
-                <label class="form-check-label ml-4" for="inlineRadio1"><u><b> ข้อสอบแบบปรนัย</b></u></label>
-                <div id="point_1" class="form-inline mt-2">
-                  <label>คะแนนสอบปรนัยข้อละ</label>
-                  <input required id="name_pointt1" style="margin-left:5px;width:100px" type="text" name="name_score_exam1[]" class="form-control" value="<?php if ($manager == "edit") {
-                                                                                                                                                            echo $name_score_exam1;
-                                                                                                                                                          } ?>" autofocus="autofocus" spellcheck="false" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required="required"></input>
-                  <label>&nbsp; คะแนน</label>
+                <div class="form-check form-check-inline">
+                  <input onclick="exam_type1()" <?php if ($type_series_exam1 == 1) {
+                                                  echo "checked";
+                                                } ?> class="form-check-input" type="checkbox" name="type_series_exam1" id="ex_t1" value="1">
+                  <label class="form-check-label" for="ex_t1"><u><b> ข้อสอบแบบปรนัย</b></u></label>
+                </div>
+                <div class="form-group" id="point_1">
+                  <div id="auto_re">
+                    <label>สอบใหม่อัตโนม้ติ (กรณีสอบไม่ผ่านเกณฑ์) <font color="red"><b>***ใช้ได้กับข้อสอบแบบปรนัยเท่านั้น</b></font></label>
+                    <ul class="list-group list-group-flush">
+                      <label class="switch">
+                        <input id="checkbox_re_series_exam" <?php if ($auto_re_series_exam == '1' && $type_series_exam2 != '2') {
+                                                              echo "checked";
+                                                            } ?> name=" auto_re_series_exam" value="1" type="checkbox" class="primary">
+                        <span class="slider round"></span>
+                      </label>
+                    </ul>
+                  </div>
+                  <div class="form-inline mt-2">
+                    <label>คะแนนสอบปรนัยข้อละ</label>
+                    <input required id="name_pointt1" style="margin-left:5px;width:100px" type="text" name="name_score_exam1[]" class="form-control" value="<?php if ($manager == "edit") {
+                                                                                                                                                              echo $name_score_exam1;
+                                                                                                                                                            } ?>" autofocus="autofocus" spellcheck="false" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required="required"></input>
+                    <label>&nbsp; คะแนน</label>
+                  </div>
                 </div>
               </div>
               <div class="table-responsive" id="show">
@@ -386,10 +405,12 @@ if ($_SESSION['id_teacher']) {
               </div>
               <br>
               <div style="border-radius: 5px 5px 5px 5px;" class="card-header">
-                <input onclick="exam_type2()" <?php if ($type_series_exam2 == 2) {
-                                                echo "checked";
-                                              } ?> class="form-check-input ml-2" type="checkbox" name="type_series_exam2" id="ex_t2" value="2">
-                <label class="form-check-label ml-4" for="inlineRadio2"><u><b> ข้อสอบแบบอัตนัย</b></u></label>
+                <div class="form-check form-check-inline">
+                  <input onclick="exam_type2()" <?php if ($type_series_exam2 == 2) {
+                                                  echo "checked";
+                                                } ?> class="form-check-input" type="checkbox" name="type_series_exam2" id="ex_t2" value="2">
+                  <label class="form-check-label" for="ex_t2"><u><b> ข้อสอบแบบอัตนัย</b></u></label>
+                </div>
               </div>
               <div class="table-responsive" id="show2">
 
@@ -426,15 +447,8 @@ if ($_SESSION['id_teacher']) {
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Page level plugin JavaScript-->
-    <script src="vendor/datatables/jquery.dataTables.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
-
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin.min.js"></script>
-
-    <!-- Demo scripts for this page-->
-    <script src="js/demo/datatables-demo.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -449,6 +463,9 @@ if ($_SESSION['id_teacher']) {
 
     <!-- <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script> -->
     <script>
+      <?php if ($type_series_exam2 == 2) {
+        echo "$('#auto_re').hide();";
+      } ?>
       var ex_t1 = document.getElementById("ex_t1");
       var ex_t2 = document.getElementById("ex_t2");
       // ex_t1.checked = true;
@@ -554,6 +571,9 @@ if ($_SESSION['id_teacher']) {
               $("#show2").html(data);
             },
           });
+          $("#checkbox_re_series_exam").prop("checked", false);
+          $('#auto_re').val(0);
+          $('#auto_re').hide();
           // document.getElementById("name_pointt1").name = " ";
           // document.getElementById("name_pointt1").value = null;
           // document.getElementById("name_pointt1").required = false;
@@ -568,6 +588,7 @@ if ($_SESSION['id_teacher']) {
               $("#show2").html(data);
             },
           });
+          $('#auto_re').show();
         }
 
       }

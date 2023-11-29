@@ -1,19 +1,23 @@
+<html>
+<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+
+</html>
 <?php
 include 'connect.php';
 
-	function DateThai($strDate)
-	{
-		$strYear = date("Y",strtotime($strDate))+543;
-		$strMonth= date("m",strtotime($strDate));
-		$strDay= date("j",strtotime($strDate));
-		$strHour= date("H",strtotime($strDate));
-		$strMinute= date("i",strtotime($strDate));
-		$strSeconds= date("s",strtotime($strDate));
-		// $strMonthCut = Array("","ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค.");
-		// $strMonthThai=$strMonthCut[$strMonth];
-		// return "$strDay$strMonthThai $strYear, $strHour:$strMinute";
-		return "$strYear-$strMonth-$strDay $strHour:$strMinute:$strSeconds";
-	}
+function DateThai($strDate)
+{
+	$strYear = date("Y", strtotime($strDate)) + 543;
+	$strMonth = date("m", strtotime($strDate));
+	$strDay = date("j", strtotime($strDate));
+	$strHour = date("H", strtotime($strDate));
+	$strMinute = date("i", strtotime($strDate));
+	$strSeconds = date("s", strtotime($strDate));
+	// $strMonthCut = Array("","ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค.");
+	// $strMonthThai=$strMonthCut[$strMonth];
+	// return "$strDay$strMonthThai $strYear, $strHour:$strMinute";
+	return "$strYear-$strMonth-$strDay $strHour:$strMinute:$strSeconds";
+}
 
 
 
@@ -63,6 +67,12 @@ if (isset($_POST["add_series_exam"])) {
 		$name_score_exam = $name_score_exam2;
 	} else if ($name_score_exam1 != null && $name_score_exam2 != null) {
 		$name_score_exam = $name_score_exam1 . ";" . $name_score_exam2;
+	}
+
+	if (isset($_POST['auto_re_series_exam'])) {
+		$auto_re_series_exam = $_POST['auto_re_series_exam'];
+	} else {
+		$auto_re_series_exam = 0;
 	}
 
 	// $name_score_exam = explode(";", $name_score_exam);
@@ -120,32 +130,15 @@ if (isset($_POST["add_series_exam"])) {
 			//echo $datetime_END."<br>";
 		}
 	}
-
-	// echo $time;
-	////////////////////////
-	if ($type_series_exam1 == null && $type_series_exam2 == null) {
-		echo "<script language=''>
-											var r = confirm('โปรดเลือกข้อสอบมากกว่า 1 ข้อ');
-												if (r == true) {
-												window.history.back();
-												} else {
-												window.history.back();
-												}
-											</script>";
+	if ($type_series_exam1 == null && $num_exam_value1 == null) {
+		echo AlertMsg('โปรดเลือกข้อสอบปรนัยมากกว่า 1 ข้อ', 2);
 	} else {
-		// echo $type_series_exam;
-		if ($type_series_exam1 != null) {
-			if ($num_exam_value1 == null) {
-				echo "<script language=''>
-																	var r = confirm('โปรดเลือกข้อสอบปรนัยมากกว่า 1 ข้อ');
-																		if (r == true) {
-																		window.history.back();
-																		} else {
-																		window.history.back();
-																		}
-																	</script>";
-			} else {
-				$sql = "INSERT INTO `manager_series_exam`
+		if ($type_series_exam1 != null && $num_exam_value1 == null) {
+			echo AlertMsg('โปรดเลือกข้อสอบปรนัยมากกว่า 1 ข้อ', 2);
+		} else if ($type_series_exam2 != null && $num_exam_value2 == null) {
+			echo AlertMsg('โปรดเลือกข้อสอบอัตนัยมากกว่า 1 ข้อ', 2);
+		} else {
+			$sql = "INSERT INTO `manager_series_exam`
 											(`id`,
 											`id_subject_series_exam`,
 											`branch_id_series_exam`,
@@ -158,7 +151,8 @@ if (isset($_POST["add_series_exam"])) {
 											`list_series_exam`,
 											`score_series_exam`,
 											`type_series_exam`,
-											`approve_series_exam`)
+											`approve_series_exam`,
+											`auto_re_series_exam`)
 											VALUES (NULL,
 											'$id_subject',
 											'$branch_id_series_exam',
@@ -171,56 +165,93 @@ if (isset($_POST["add_series_exam"])) {
 											'$list_series_exam',
 											'$name_score_exam',
 											'$type_series_exam',
-											'$approve_series_exam')";
-				if ($conn->query($sql) === TRUE) {
-					header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
-				}
-			}
-		} else if ($type_series_exam2 != null) {
-			// print_r($num_exam_value2);
-			if ($num_exam_value2 == null) {
-				echo "<script language=''>
-																	var r = confirm('โปรดเลือกข้อสอบอัตนัยมากกว่า 1 ข้อ');
-																		if (r == true) {
-																		window.history.back();
-																		} else {
-																		window.history.back();
-																		}
-																	</script>";
-			} else {
-				$sql = "INSERT INTO `manager_series_exam`
-											(`id`,
-											`id_subject_series_exam`,
-											`branch_id_series_exam`,
-											`year_std_series_exam`,
-											`name_series_exam`,
-											`type_exam`,
-											`teacher_id_series_exam`,
-											`datetime_start_series_exam`,
-											`datetime_end_series_exam`,
-											`list_series_exam`,
-											`score_series_exam`,
-											`type_series_exam`,
-											`approve_series_exam`)
-											VALUES (NULL,
-											'$id_subject',
-											'$branch_id_series_exam',
-											'$year_std_series_exam',
-											'$name_series_exam',
-											'$type_exam',
-											'$teacher_id_series_exam',
-											'$datetime_START',
-											'$datetime_END',
-											'$list_series_exam',
-											'$name_score_exam',
-											'$type_series_exam',
-											'$approve_series_exam')";
-
-				if ($conn->query($sql) === TRUE) {
-					header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
-				}
+											'$approve_series_exam',
+											'$auto_re_series_exam')";
+			if ($conn->query($sql) === TRUE) {
+				echo AlertSuccess("บันทึกสำเร็จ", $id_subject);
+				//header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
 			}
 		}
+		// if ($type_series_exam1 != null) {
+		// 	if ($num_exam_value1 == null) {
+		// 		echo AlertMsg('โปรดเลือกข้อสอบปรนัยมากกว่า 1 ข้อ', 2);
+		// 	} else {
+		// 		$sql = "INSERT INTO `manager_series_exam`
+		// 									(`id`,
+		// 									`id_subject_series_exam`,
+		// 									`branch_id_series_exam`,
+		// 									`year_std_series_exam`,
+		// 									`name_series_exam`,
+		// 									`type_exam`,
+		// 									`teacher_id_series_exam`,
+		// 									`datetime_start_series_exam`,
+		// 									`datetime_end_series_exam`,
+		// 									`list_series_exam`,
+		// 									`score_series_exam`,
+		// 									`type_series_exam`,
+		// 									`approve_series_exam`,
+		// 									`auto_re_series_exam`)
+		// 									VALUES (NULL,
+		// 									'$id_subject',
+		// 									'$branch_id_series_exam',
+		// 									'$year_std_series_exam',
+		// 									'$name_series_exam',
+		// 									'$type_exam',
+		// 									'$teacher_id_series_exam',
+		// 									'$datetime_START',
+		// 									'$datetime_END',
+		// 									'$list_series_exam',
+		// 									'$name_score_exam',
+		// 									'$type_series_exam',
+		// 									'$approve_series_exam',
+		// 									'$auto_re_series_exam')";
+		// 		if ($conn->query($sql) === TRUE) {
+		// 			header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
+		// 		}
+		// 	}
+		// }
+
+		// if ($type_series_exam2 != null) {
+		// 	print_r($num_exam_value2);
+		// 	if ($num_exam_value2 == null) {
+		// 		echo AlertMsg('โปรดเลือกข้อสอบอัตนัยมากกว่า 1 ข้อ', 2);;
+		// 	} else {
+		// 		$sql = "INSERT INTO `manager_series_exam`
+		// 									(`id`,
+		// 									`id_subject_series_exam`,
+		// 									`branch_id_series_exam`,
+		// 									`year_std_series_exam`,
+		// 									`name_series_exam`,
+		// 									`type_exam`,
+		// 									`teacher_id_series_exam`,
+		// 									`datetime_start_series_exam`,
+		// 									`datetime_end_series_exam`,
+		// 									`list_series_exam`,
+		// 									`score_series_exam`,
+		// 									`type_series_exam`,
+		// 									`approve_series_exam`,
+		// 									`auto_re_series_exam`
+		// 									)
+		// 									VALUES (NULL,
+		// 									'$id_subject',
+		// 									'$branch_id_series_exam',
+		// 									'$year_std_series_exam',
+		// 									'$name_series_exam',
+		// 									'$type_exam',
+		// 									'$teacher_id_series_exam',
+		// 									'$datetime_START',
+		// 									'$datetime_END',
+		// 									'$list_series_exam',
+		// 									'$name_score_exam',
+		// 									'$type_series_exam',
+		// 									'$approve_series_exam'
+		// 									'$auto_re_series_exam')";
+
+		// 		if ($conn->query($sql) === TRUE) {
+		// 			header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
+		// 		}
+		// 	}
+		// }
 	}
 }
 
@@ -309,6 +340,12 @@ if (isset($_POST["edit_series_exam"])) {
 		$approve_series_exam = 0;
 	}
 
+	if (isset($_POST['auto_re_series_exam'])) {
+		$auto_re_series_exam = $_POST['auto_re_series_exam'];
+	} else {
+		$auto_re_series_exam = 0;
+	}
+
 	$time = $_POST['Time'];
 	$time_count = explode(',', $time);
 	for ($i_arr = 0; $i_arr < count($time_count); $i_arr++) {
@@ -341,57 +378,14 @@ if (isset($_POST["edit_series_exam"])) {
 		$type_series_exam2 = $type_series_exam_check[1];
 	}
 	if ($type_series_exam1 == null && $type_series_exam2 == null) {
-		echo "<script language=''>
-							var r = confirm('โปรดเลือกข้อสอบมากกว่า 1 ข้อ');
-								if (r == true) {
-								window.history.back();
-								} else {
-								window.history.back();
-								}
-							</script>";
+		echo AlertMsg('โปรดเลือกข้อสอบมากกว่า 1 ข้อ', 2);;
 	} else {
-		// echo $type_series_exam;
-		if ($type_series_exam1 != null) {
-			if ($num_exam_value1 == null) {
-				echo "<script language=''>
-													var r = confirm('โปรดเลือกข้อสอบปรนัยมากกว่า 1 ข้อ');
-														if (r == true) {
-														window.history.back();
-														} else {
-														window.history.back();
-														}
-													</script>";
-			} else {
-				$sql = "UPDATE `manager_series_exam` SET
-				`branch_id_series_exam` = '$branch_id_series_exam',
-				`year_std_series_exam` = '$year_std_series_exam',
-				`name_series_exam` = '$name_series_exam',
-				`type_exam` = '$type_exam',
-				`teacher_id_series_exam` = '$teacher_id_series_exam',
-				`datetime_start_series_exam` = '$datetime_START',
-				`datetime_end_series_exam` = '$datetime_END',
-				`list_series_exam` = '$list_series_exam',
-				`score_series_exam` = '$name_score_exam',
-				`type_series_exam` = '$type_series_exam',
-				`approve_series_exam` = '$approve_series_exam'
-				 WHERE `manager_series_exam`.`id` = $id_series_exam";
-				if ($conn->query($sql) === TRUE) {
-					header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
-				}
-			}
-		} else if ($type_series_exam2 != null) {
-			// print_r($num_exam_value2);
-			if ($num_exam_value2 == null) {
-				echo "<script language=''>
-													var r = confirm('โปรดเลือกข้อสอบอัตนัยมากกว่า 1 ข้อ');
-														if (r == true) {
-														window.history.back();
-														} else {
-														window.history.back();
-														}
-													</script>";
-			} else {
-				$sql = "UPDATE `manager_series_exam` SET
+		if ($type_series_exam1 != null && $num_exam_value1 == null) {
+			echo AlertMsg('โปรดเลือกข้อสอบอัตนัยมากกว่า 1 ข้อ', 2);
+		} else if ($type_series_exam2 != null && $num_exam_value2 == null) {
+			echo AlertMsg('โปรดเลือกข้อสอบอัตนัยมากกว่า 1 ข้อ', 2);
+		} else {
+			$sql = "UPDATE `manager_series_exam` SET
 							`branch_id_series_exam` = '$branch_id_series_exam',
 							`year_std_series_exam` = '$year_std_series_exam',
 							`name_series_exam` = '$name_series_exam',
@@ -402,13 +396,61 @@ if (isset($_POST["edit_series_exam"])) {
 							`list_series_exam` = '$list_series_exam',
 							`score_series_exam` = '$name_score_exam',
 							`type_series_exam` = '$type_series_exam',
-							`approve_series_exam` = '$approve_series_exam'
+							`approve_series_exam` = '$approve_series_exam',
+							`auto_re_series_exam` = '$auto_re_series_exam'
 							 WHERE `manager_series_exam`.`id` = $id_series_exam";
 				if ($conn->query($sql) === TRUE) {
-					header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
+				echo AlertSuccess("บันทึกสำเร็จ", $id_subject);
+				//header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
 				}
-			}
 		}
+		// if ($type_series_exam1 != null) {
+		// 	if ($num_exam_value1 == null) {
+		// 		echo AlertMsg('โปรดเลือกข้อสอบปรนัยมากกว่า 1 ข้อ', 2);
+		// 	} else {
+		// 		// $sql = "UPDATE `manager_series_exam` SET
+		// 		// `branch_id_series_exam` = '$branch_id_series_exam',
+		// 		// `year_std_series_exam` = '$year_std_series_exam',
+		// 		// `name_series_exam` = '$name_series_exam',
+		// 		// `type_exam` = '$type_exam',
+		// 		// `teacher_id_series_exam` = '$teacher_id_series_exam',
+		// 		// `datetime_start_series_exam` = '$datetime_START',
+		// 		// `datetime_end_series_exam` = '$datetime_END',
+		// 		// `list_series_exam` = '$list_series_exam',
+		// 		// `score_series_exam` = '$name_score_exam',
+		// 		// `type_series_exam` = '$type_series_exam',
+		// 		// `approve_series_exam` = '$approve_series_exam',
+		// 		// `auto_re_series_exam` = '$auto_re_series_exam'
+		// 		//  WHERE `manager_series_exam`.`id` = $id_series_exam";
+		// 		// if ($conn->query($sql) === TRUE) {
+		// 		// 	//AlertSuccess("บันทึกสำเร็จ");
+		// 		// 	header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
+		// 		// }
+		// 	}
+		// }
+		// if ($type_series_exam2 != null) {
+		// 	if ($num_exam_value2 == null) {
+		// 		echo AlertMsg('โปรดเลือกข้อสอบอัตนัยมากกว่า 1 ข้อ', 2);
+		// 	} else {
+		// 		// $sql = "UPDATE `manager_series_exam` SET
+		// 		// 			`branch_id_series_exam` = '$branch_id_series_exam',
+		// 		// 			`year_std_series_exam` = '$year_std_series_exam',
+		// 		// 			`name_series_exam` = '$name_series_exam',
+		// 		// 			`type_exam` = '$type_exam',
+		// 		// 			`teacher_id_series_exam` = '$teacher_id_series_exam',
+		// 		// 			`datetime_start_series_exam` = '$datetime_START',
+		// 		// 			`datetime_end_series_exam` = '$datetime_END',
+		// 		// 			`list_series_exam` = '$list_series_exam',
+		// 		// 			`score_series_exam` = '$name_score_exam',
+		// 		// 			`type_series_exam` = '$type_series_exam',
+		// 		// 			`approve_series_exam` = '$approve_series_exam'
+		// 		// 			 WHERE `manager_series_exam`.`id` = $id_series_exam";
+		// 		// if ($conn->query($sql) === TRUE) {
+		// 		// 	//AlertSuccess("บันทึกสำเร็จ");
+		// 		// 	header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
+		// 		// }
+		// 	}
+		// }
 	}
 }
 
@@ -484,4 +526,46 @@ if (isset($_POST["check_exam_std"])) {
 								javascript:history.go(-2);
 							</script>';
 	}
+}
+
+function AlertMsg($msg, $level)
+{
+	if ($level == 1) {
+		$level = "success";
+	} else if ($level == 2) {
+		$level = "warning";
+	} else if ($level == 3) {
+		$level = "error";
+	} else {
+		$level = "info";
+	}
+	return "<script language=''>
+						Swal.fire({
+							title: 'แจ้งเตือน',
+							text: '" . $msg . "',
+							icon: 'warning',
+							confirmButtonText: 'ตกลง',
+    						confirmButtonColor: '#007bff'
+							}).then((result) => {
+						if (result.isConfirmed) {
+							window.history.back();
+						} else if (result.isDenied) {
+							window.history.back();
+						}
+						});
+		</script>";
+}
+
+function AlertSuccess($msg, $id_subject)
+{
+	return '<script>
+	Swal.fire({
+			icon: "success",
+			title: "' . $msg . '",
+			showConfirmButton: false,
+			timer: 750
+			}).then((result) => {
+				window.location.href = "Series_Exam_Subject_List.php?id_subject='.$id_subject.'";
+			});
+	</script>';
 }
