@@ -5,17 +5,17 @@ $sql = "SELECT * FROM `manage_std`";
 $result = $conn->query($sql);
 $year = date("Y") + 543;
 
-// $sqlstd = "SELECT * FROM `manager_status` WHERE `manager_status`.`id` = 1";
-// $result = $conn->query($sqlstd);
-// while ($row = $result->fetch_assoc()) {
-//     $year_std = $row["year_std"];
-// }
-$sqlStd = "UPDATE `manager_status` SET `year_std` = $year+1 WHERE `manager_status`.`id` = 1;";
-$conn->query($sqlStd);
+$sqlstd = "SELECT * FROM `manager_status` WHERE `manager_status`.`id` = 1";
+$result1 = $conn->query($sqlstd);
+while ($row1 = $result1->fetch_assoc()) {
+    $year_std = $row1["year_std"];
+}
+$sql = "UPDATE `manager_status` SET `year_std` = $year_std - 1 WHERE `manager_status`.`id` = 1;";
+$conn->query($sql);
 
 while ($row = $result->fetch_assoc()) {
     $id_std = $row["id"];
-    $degree_std = $row["degree_std"] + 1;
+    $degree_std = $row["degree_std"] - 1;
     $section_std = $row["section_std"];
 
     $sqlUPdegree = "UPDATE `manage_std` SET `year_std` = '$degree_std/$section_std', `degree_std` = '$degree_std' WHERE `manage_std`.`id` = $id_std;";
