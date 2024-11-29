@@ -15,6 +15,9 @@ if ($_SESSION['id_teacher']) {
         $data_name_teacher_subject =  $row_teacher['name_teacher'];
     }
     //echo  $data_id_teacher;
+    if($_SESSION['status_teacher'] != 1) {
+        header("location:Manager_Std.php");
+    }
 } else {
     session_destroy();
     header("location:Login.php");
@@ -96,7 +99,8 @@ if ($_SESSION['id_teacher']) {
                         <a href="index.php">หน้าหลัก</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="Manager_Std.php">จัดการนักศึกษา</a></li>
+                        <a href="Manager_Std.php">จัดการนักศึกษา</a>
+                    </li>
                     <li class="breadcrumb-item active">Import CSV</li>
                 </ol>
 

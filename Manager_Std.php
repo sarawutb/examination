@@ -1,23 +1,23 @@
 <?php
 session_start();
 if ($_SESSION['id_teacher']) {
-  include("connect.php");
-  $id_teacher = $_SESSION['id_teacher'];
-  $status_teacher = $_SESSION['status_teacher'];
-  //echo $status_teacher;
+    include("connect.php");
+    $id_teacher = $_SESSION['id_teacher'];
+    $status_teacher = $_SESSION['status_teacher'];
+    //echo $status_teacher;
 
-  $sql_teacher = "SELECT * FROM `manager_teacher` WHERE id_teacher=$id_teacher";
-  $result_teacher = mysqli_query($conn, $sql_teacher);
-  $number = 1;
-  while ($row_teacher = mysqli_fetch_array($result_teacher, MYSQLI_ASSOC)) {
-    $data_id =  $row_teacher['id_teacher'];
-    $data_id_teacher =  $row_teacher['id_teacher'];
-    $data_name_teacher_subject =  $row_teacher['name_teacher'];
-  }
-  //echo  $data_id_teacher;
+    $sql_teacher = "SELECT * FROM `manager_teacher` WHERE id_teacher=$id_teacher";
+    $result_teacher = mysqli_query($conn, $sql_teacher);
+    $number = 1;
+    while ($row_teacher = mysqli_fetch_array($result_teacher, MYSQLI_ASSOC)) {
+        $data_id =  $row_teacher['id_teacher'];
+        $data_id_teacher =  $row_teacher['id_teacher'];
+        $data_name_teacher_subject =  $row_teacher['name_teacher'];
+    }
+    //echo  $data_id_teacher;
 } else {
-  session_destroy();
-  header("location:Login.php");
+    session_destroy();
+    header("location:Login.php");
 }
 ?>
 <!DOCTYPE html>
@@ -99,8 +99,10 @@ if ($_SESSION['id_teacher']) {
           <div class="card-header form-inline">
             <i class='far'>&#xf2bb;</i>
             ระดับการศึกษา
+            <?php if ($_SESSION['status_teacher'] == 1) { ?>
             <a href="Manager_Std_ImportCSV.php" style="margin-left:10px" class="btn btn-warning">import csv</a>
-            <form action="Manager_Std_search.php" method="get" style="position: absolute; right: 0; padding-right:10px">
+            <?php } ?>
+              <form action="Manager_Std_search.php" method="get" style="position: absolute; right: 0; padding-right:10px">
               <div class="input-group">
                 <input name="id_std_search" style="margin-right:2px" type="text" class="form-control" style="width:200px" placeholder="ใส่รหัสนักศึกษา" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
                 <div class="input-group-btn">
@@ -153,15 +155,15 @@ if ($_SESSION['id_teacher']) {
                       <div class="form-check">
                         <label class="form-check-label">
                           <input type="radio" class="form-check-input" name="gender_std" <?php if ($data_teacher_status == 1) {
-                                                                                            echo "checked";
-                                                                                          } ?> value="1" required="required"> นาย
+                                                                                                   echo "checked";
+                                                                                               } ?> value="1" required="required"> นาย
                         </label>
                       </div>
                       <div class="form-check">
                         <label class="form-check-label">
                           <input type="radio" class="form-check-input" name="gender_std" <?php if ($data_teacher_status == 2) {
-                                                                                            echo "checked";
-                                                                                          } ?> value="2" required="required"> นางสาว
+                                                                                                   echo "checked";
+                                                                                               } ?> value="2" required="required"> นางสาว
                         </label>
                       </div>
                     </div>

@@ -331,7 +331,7 @@ textarea#note {
 							  </div> -->
 
 							  <div class="container">
-							  <button name="add_chapter" type="submit" class="btn btn-success btn-block">บันทึก</button>
+							  <button name="add_chapter" value="add_chapter" type="submit" class="btn btn-success btn-block">บันทึก</button>
 							  </div>
 
 
