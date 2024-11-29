@@ -339,57 +339,57 @@ if (isset($_GET["id_series_exam"])) {
                                                   }
                                                   echo "<p><b>อัตนัย : </b>";
                                                   echo $ans_true2; ?>/<?php echo $exam_count2 . " ข้อ ";
-                                                                          $point_result_exam2 = array_sum($point_result_exam2);
-                                                                          if ($point_result_exam2 == 0) {
-                                                                            echo "<b style='color:#1a53ff'>รอตรวจ</b>";
-                                                                          } else {
-                                                                            echo "<b>" . $point_result_exam2 . " คะแนน</b>";
-                                                                            echo "</p>";
-                                                                          }
-                                                                        }
-                                                                        // echo "รอตรวจ";
+                                                                      $point_result_exam2 = array_sum($point_result_exam2);
+                                                                      if ($point_result_exam2 == 0) {
+                                                                        echo "<b style='color:#1a53ff'>รอตรวจ</b>";
                                                                       } else {
-                                                                        $point_result_exam = explode(";", $point_result_exam);
-                                                                        if ($type_series_exam1 != null) {
-                                                                          $point_result_exam1 = $point_result_exam[0];
-                                                                          if ($point_result_exam1 == null) {
-                                                                            $point_result_exam1 = 0;
-                                                                          }
-                                                                          echo "<p><b>ปรนัย : </b>";
-                                                                          echo $ans_true1; ?>/<?php echo $exam_count1 . " ข้อ ";
-                                                                          echo "<b>" . $point_result_exam1 * $score_series_exam1 . " คะแนน</b>";
-                                                                          echo "</p>";
-                                                                        }
-                                                                        if ($type_series_exam2 != null) {
-                                                                          if (strstr($row2['result_result_exam'], ";")) {
-                                                                            $point_result_exam2 = explode(",", $point_result_exam[1]);
-                                                                          } else {
-                                                                            $point_result_exam2 = explode(",", $row2['point_result_exam']);
-                                                                          }
-                                                                          echo "<p><b>อัตนัย : </b>";
-
-                                                                          $point_result_exam =  $row2['point_result_exam'];
-                                                                          $arr_point_result_exam = explode(';', $point_result_exam);
-                                                                          $arr_point_result_exam = $arr_point_result_exam[1];
-                                                                          // echo "arr_point_result_exam==".$arr_point_result_exam;echo "<br>";
-                                                                          // echo "result_result_exam==".$result_result_exam;echo "<br>";
-                                                                          // echo "arr_result_result_exam2==".$arr_result_result_exam2;echo "<br>";
-                                                                          // echo "arr_result_result_exam1==".$arr_result_result_exam1;echo "<br>";
-                                                                          if ($arr_point_result_exam == null && $result_result_exam == null || $arr_result_result_exam2 == null && $arr_result_result_exam1 == null) {
-                                                                            echo $ans_true2; ?>/<?php echo $exam_count2 . " ข้อ ";
-                                                                            echo "<b style='color:#1a53ff'>รอตรวจ</b>";
-                                                                          } else {
-                                                                            $point_result_exam2 = array_sum($point_result_exam2);
-                                                                            echo $ans_true2; ?>/<?php echo $exam_count2 . " ข้อ ";
-                                                                            echo "<b>" . $point_result_exam2 . " คะแนน</b>";
-                                                                            // echo "</p>";
-                                                                          }
-                                                                        }
-
-                                                                        // }
-
+                                                                        echo "<b>" . $point_result_exam2 . " คะแนน</b>";
+                                                                        echo "</p>";
                                                                       }
-                                                                            ?></td>
+                                                                    }
+                                                                    // echo "รอตรวจ";
+                                                                  } else {
+                                                                    $point_result_exam = explode(";", $point_result_exam);
+                                                                    if ($type_series_exam1 != null) {
+                                                                      $point_result_exam1 = $point_result_exam[0];
+                                                                      if ($point_result_exam1 == null) {
+                                                                        $point_result_exam1 = 0;
+                                                                      }
+                                                                      echo "<p><b>ปรนัย : </b>";
+                                                                      echo $ans_true1; ?>/<?php echo $exam_count1 . " ข้อ ";
+                                                                                          echo "<b>" . $point_result_exam1 * $score_series_exam1 . " คะแนน</b>";
+                                                                                          echo "</p>";
+                                                                                        }
+                                                                                        if ($type_series_exam2 != null) {
+                                                                                          if (strstr($row2['result_result_exam'], ";")) {
+                                                                                            $point_result_exam2 = explode(",", $point_result_exam[1]);
+                                                                                          } else {
+                                                                                            $point_result_exam2 = explode(",", $row2['point_result_exam']);
+                                                                                          }
+                                                                                          echo "<p><b>อัตนัย : </b>";
+
+                                                                                          $point_result_exam =  $row2['point_result_exam'];
+                                                                                          $arr_point_result_exam = explode(';', $point_result_exam);
+                                                                                          $arr_point_result_exam = $arr_point_result_exam[1];
+                                                                                          // echo "arr_point_result_exam==".$arr_point_result_exam;echo "<br>";
+                                                                                          // echo "result_result_exam==".$result_result_exam;echo "<br>";
+                                                                                          // echo "arr_result_result_exam2==".$arr_result_result_exam2;echo "<br>";
+                                                                                          // echo "arr_result_result_exam1==".$arr_result_result_exam1;echo "<br>";
+                                                                                          if ($arr_point_result_exam == null && $result_result_exam == null || $arr_result_result_exam2 == null && $arr_result_result_exam1 == null) {
+                                                                                            echo $ans_true2; ?>/<?php echo $exam_count2 . " ข้อ ";
+                                                                                                                echo "<b style='color:#1a53ff'>รอตรวจ</b>";
+                                                                                                              } else {
+                                                                                                                $point_result_exam2 = array_sum($point_result_exam2);
+                                                                                                                echo $ans_true2; ?>/<?php echo $exam_count2 . " ข้อ ";
+                                                                                                                                    echo "<b>" . $point_result_exam2 . " คะแนน</b>";
+                                                                                                                                    // echo "</p>";
+                                                                                                                                  }
+                                                                                                                                }
+
+                                                                                                                                // }
+
+                                                                                                                              }
+                                                                                                                                    ?></td>
 
                       <td>
                         <?php
@@ -468,8 +468,8 @@ if (isset($_GET["id_series_exam"])) {
                         <center>
                           <?php //if($status_exam_std == 0) {
                           ?>
-                          <a href="manager_send_exam_web.php?id=<?php echo $id; ?>&id_series_exam=<?php echo $id_series_exam; ?>&delete_result_exam_std" onclick="return buttonDelete<?php echo $number; ?>();"><button type="button" class="btn btn-danger"><b>ลบ<b></button></a>
-                          <? php // }else{ 
+                          <button onclick="return buttonDelete('manager_send_exam_web.php?id=<?php echo $id; ?>&id_series_exam=<?php echo $id_series_exam; ?>&year_std_series_exam=<?= $year_std_series_exam ?>&id_subject=<?= $id_subject ?>&delete_result_exam_std');" type="button" class="btn btn-danger"><b>ลบ<b></button>
+                          <?php // }else{ 
                           ?>
                           <!-- <button disabled type="button" class="btn btn-danger"><b>ลบ<b></button></a> -->
                           <?php //} 
@@ -519,25 +519,14 @@ if (isset($_GET["id_series_exam"])) {
 </body>
 
 </html>
-
-<?php
-$i = 1;
-$sql = "SELECT * FROM `result_exam_std`
-			INNER JOIN manage_std on result_exam_std.id_std_result_exam = manage_std.id
-			WHERE `id_name_series_exam` = 25";
-$result = mysqli_query($conn, $sql);
-while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-?>
-
-  <script>
-    function buttonDelete<?php echo $i; ?>() {
-      var result = confirm("แน่ใจว่าต้องการลบ");
-      if (result == true) {
-        return true;
-      } else {
-        return false;
-      }
+<script>
+  function buttonDelete(req) {
+    var result = confirm("แน่ใจว่าต้องการลบ");
+    if (result == true) {
+      window.location.href = req;
+      return true;
+    } else {
+      return false;
     }
-  </script>
-<?php $i++;
-} ?>
+  }
+</script>

@@ -225,7 +225,7 @@ $id_list = $_GET['id'];
 
   <?php
   $i = 1;
-	$sql = "SELECT * FROM `manage_std`";
+	$sql = "SELECT * FROM `manage_std` WHERE IsUse = 1;";
 	$result = mysqli_query($conn, $sql);
 	while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
   ?>

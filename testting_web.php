@@ -13,7 +13,7 @@ if(isset($_SESSION['id_std'])){
 
 	if(isset($_GET["id_std"])){
 						$id = $_GET["id_std"];
-			$sql1 = "SELECT * FROM `manage_std` WHERE id_std = $id";
+			$sql1 = "SELECT * FROM `manage_std` WHERE id_std = $id AND IsUse = 1;";
 			$result1 = mysqli_query($conn, $sql1);
 			while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
 				$id_std =  $row1['id'];
@@ -56,7 +56,7 @@ function DateThai($strDate)
 
  // substr("59122420", 0, 2);
 
-					$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_STD";
+					$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_STD AND IsUse = 1;";
 								$result1 = mysqli_query($conn, $sql1);
 								while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
 									$id =  $row1['id'];

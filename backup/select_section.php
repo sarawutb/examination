@@ -6,7 +6,7 @@
 	$degree =$_REQUEST["degree"];
 	$degree_after =$_REQUEST["degree_after"];
 
- 	$sql2 = "SELECT DISTINCT `degree_std`,`section_std` FROM `manage_std` WHERE `branch_id_std` = $branch ORDER BY `manage_std`.`degree_std` ASC";
+ 	$sql2 = "SELECT DISTINCT `degree_std`,`section_std` FROM `manage_std` WHERE `branch_id_std` = $branch AND IsUse = 1 ORDER BY `manage_std`.`degree_std` ASC";
 	$true = 0;
 
 	$result2 = mysqli_query($conn, $sql2);

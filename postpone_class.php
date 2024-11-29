@@ -1,7 +1,7 @@
 <?php
 date_default_timezone_set("Asia/Bangkok");
 include('connect.php');
-$sql = "SELECT * FROM `manage_std`";
+$sql = "SELECT * FROM `manage_std` WHERE IsUse = 1;";
 $result = $conn->query($sql);
 $year = date("Y") + 543;
 

@@ -14,7 +14,7 @@ if(isset($_POST["add_std"])){
 
 					$name = $name_std." ".$last_std;
 
-					$sql = "SELECT * FROM `manage_std` WHERE `id_std` = $id_std";
+					$sql = "SELECT * FROM `manage_std` WHERE `id_std` = $id_std AND IsUse = 1;";
 					$result = mysqli_query($conn, $sql);
 					while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
 						$status = false;
@@ -58,7 +58,7 @@ if(isset($_POST["update_std"])){
 
 					$name = $name_std." ".$last_std;
 
-					$sql = "SELECT * FROM `manage_std` WHERE `id_std` = $id_std";
+					$sql = "SELECT * FROM `manage_std` WHERE `id_std` = $id_std AND IsUse = 1;";
 					$result = mysqli_query($conn, $sql);
 					while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
 						$status = false;

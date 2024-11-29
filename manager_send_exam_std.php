@@ -160,7 +160,7 @@ if (isset($_POST["send_exam"])) {
 		$result_add = true;
 	}
 	if ($result_add == true) {
-		$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std";
+		$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std AND IsUse = 1;";
 		$result1 = mysqli_query($conn, $sql1);
 		while ($row1 = mysqli_fetch_array($result1, MYSQLI_ASSOC)) {
 			$id_std =  $row1['id_std'];
@@ -189,7 +189,7 @@ if (isset($_POST["send_exam"])) {
 			 VALUES (NULL, '$id_std', '$id_series_exam', '$List_series_exam', '$Ans_list', '$result_point', '$point_sum', '$status_exam_std');";
 			 	if ($conn->query($sql) === TRUE) {
 
-			 		$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std";
+			 		$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std AND IsUse = 1;";
 			 		$result1 = mysqli_query($conn, $sql1);
 			 		while ($row1 = mysqli_fetch_array($result1, MYSQLI_ASSOC)) {
 			 			$id_std =  $row1['id_std'];

@@ -92,7 +92,7 @@ session_start();
 
 	<div class="container-fluid">
 		<?php
-			$sql1 = "SELECT * FROM `manage_std` WHERE `id`= $id_std";
+			$sql1 = "SELECT * FROM `manage_std` WHERE `id`= $id_std AND IsUse = 1;";
 			$result1 = mysqli_query($conn, $sql1);
 					while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)){
 					$name_std =  $row1['name_std'];
@@ -185,7 +185,7 @@ session_start();
 
   <?php
   $i = 1;
-	$sql = "SELECT * FROM `manage_std`";
+	$sql = "SELECT * FROM `manage_std` WHERE IsUse = 1;";
 	$result = mysqli_query($conn, $sql);
 	while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
   ?>

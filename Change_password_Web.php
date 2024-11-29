@@ -28,7 +28,7 @@ if(isset($_GET['false'])){
 	$value_true = 'false';
 }
 
-$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_STD";
+$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_STD AND IsUse = 1;";
 			$result1 = mysqli_query($conn, $sql1);
 			while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
 				$id =  $row1['id'];

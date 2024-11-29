@@ -24,7 +24,7 @@ session_start();
                         $data_name_teacher_subject =  $row_teacher['name_teacher'];
 					}
 
-          $sql = "SELECT * FROM `manage_std` WHERE (genre_std = 1 AND degree_std <=3 OR genre_std = 2 AND degree_std <=2) AND id_std = $id_std_search";
+          $sql = "SELECT * FROM `manage_std` WHERE id_std = $id_std_search AND IsUse = 1;";
           $result = $conn->query($sql);
           if ($result->num_rows > 0) {
             // output data of each row
@@ -171,7 +171,7 @@ session_start();
                 </thead>
                 <tbody>
 				<?php
-					$sql = "SELECT * FROM `manage_std` WHERE `branch_id_std` = '$branch_id_std' AND `genre_std` = '$genre_std' AND `degree_std`= '$degree_std' AND `section_std` ='$section_std' ORDER BY `manage_std`.`id_std` ASC";
+					$sql = "SELECT * FROM `manage_std` WHERE `branch_id_std` = '$branch_id_std' AND `genre_std` = '$genre_std' AND `degree_std`= '$degree_std' AND `section_std` ='$section_std' AND IsUse = 1 ORDER BY `manage_std`.`id_std` ASC";
                     $result = mysqli_query($conn, $sql);
 					$number = 1;
                     while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
@@ -222,7 +222,7 @@ session_start();
 		<input hidden type="text" name="genre_std" value="<?php echo $genre_std; ?>" />
 		<?php
         $empty = null;
-					$sql1 = "SELECT * FROM `manage_std` WHERE id = '$data_id'";
+					$sql1 = "SELECT * FROM `manage_std` WHERE id = '$data_id' AND IsUse = 1;";
                     $result1 = mysqli_query($conn, $sql1);
                     while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
                         $data_id1 =  $row1['id'];
@@ -475,7 +475,7 @@ session_start();
 
   <?php
   $i = 1;
-	$sql = "SELECT * FROM `manage_std`";
+	$sql = "SELECT * FROM `manage_std` WHERE IsUse = 1;";
 	$result = mysqli_query($conn, $sql);
 	while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
   ?>

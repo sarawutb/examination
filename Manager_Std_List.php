@@ -140,7 +140,7 @@ session_start();
                 </thead>
                 <tbody>
 				<?php
-					$sql = "SELECT * FROM `manage_std` WHERE `branch_id_std` = '$branch_id_std' AND `genre_std` = '$genre_std' AND `degree_std`= '$degree_std' AND `section_std` ='$section_std' ORDER BY `manage_std`.`id_std` ASC";
+					$sql = "SELECT * FROM `manage_std` WHERE `branch_id_std` = '$branch_id_std' AND IsUse = 1 AND `genre_std` = '$genre_std' AND `degree_std`= '$degree_std' AND `section_std` ='$section_std' ORDER BY `manage_std`.`id_std` ASC";
                     $result = mysqli_query($conn, $sql);
 					$number = 1;
                     while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
@@ -191,7 +191,7 @@ session_start();
 		<input hidden type="text" name="genre_std" value="<?php echo $genre_std; ?>" />
 		<?php
         $empty = null;
-					$sql1 = "SELECT * FROM `manage_std` WHERE id = '$data_id'";
+					$sql1 = "SELECT * FROM `manage_std` WHERE id = '$data_id' AND IsUse = 1;";
                     $result1 = mysqli_query($conn, $sql1);
                     while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
                         $data_id1 =  $row1['id'];
@@ -444,7 +444,7 @@ session_start();
 
   <?php
   $i = 1;
-	$sql = "SELECT * FROM `manage_std`";
+	$sql = "SELECT * FROM `manage_std` WHERE IsUse = 1;";
 	$result = mysqli_query($conn, $sql);
 	while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
   ?>

@@ -10,7 +10,7 @@ if(isset($_SESSION['id_std'])){
 	  session_destroy();
 	  header("location:LoginStd.php");
   }
-$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_STD";
+$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_STD AND IsUse = 1;";
       $result1 = mysqli_query($conn, $sql1);
       while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
         $id_std =  $row1['id_std'];

@@ -10,7 +10,7 @@
 
     // isAdmin: 1=admin 0=user
 
-	$strSQL = "SELECT * FROM `manage_std` WHERE id_std = '$id_std' AND password_std = '$password'";
+	$strSQL = "SELECT * FROM `manage_std` WHERE id_std = '$id_std' AND password_std = '$password' AND IsUse = 1;";
     $result = mysqli_query($conn, $strSQL);
     if (mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {

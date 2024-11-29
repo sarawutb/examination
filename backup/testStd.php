@@ -72,7 +72,7 @@ pre { white-space:pre-wrap; word-wrap:break-word; overflow:auto; }
 <?php
 if(isset($_GET["id_std"])){
 					$id = $_GET["id_std"];
-		$sql1 = "SELECT * FROM `manage_std` WHERE id_std = $id";
+		$sql1 = "SELECT * FROM `manage_std` WHERE id_std = $id AND IsUse = 1;";
 		$result1 = mysqli_query($conn, $sql1);
 		while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
 			$id_std =  $row1['id'];

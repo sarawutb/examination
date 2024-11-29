@@ -2,7 +2,7 @@
 include("connect.php");
 $id_std = $_GET['id_std'];
 // echo "id=".$id_std;
-$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std ";
+$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std AND IsUse = 1;";
       $result1 = mysqli_query($conn, $sql1);
       while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
         $id_std =  $row1['id'];
@@ -52,7 +52,7 @@ if(isset($_GET["show_subject"])){
 	$id_std = $_GET['id_std'];
   if(isset($_GET["id_STD"])){
     $id_std = $_GET["id_STD"];
-    $sql1 = "SELECT * FROM `manage_std` WHERE id_std = $id_std ";
+    $sql1 = "SELECT * FROM `manage_std` WHERE id_std = $id_std AND IsUse = 1;";
           $result1 = mysqli_query($conn, $sql1);
           while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
             $id_std =  $row1['id'];

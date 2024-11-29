@@ -4,7 +4,7 @@ include'connect.php';
 $id = $_GET["id"];
 $id_std = $_GET['id_std'];
 
-$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std";
+$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std AND IsUse = 1;";
 			$result1 = mysqli_query($conn, $sql1);
 			while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
 				$std_id = $row1['id'];

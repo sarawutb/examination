@@ -65,7 +65,7 @@ if(isset($_GET["send_exam"])){
 						$result_add = true;
 					}
 					if($result_add == true){
-						$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std";
+						$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std AND IsUse = 1;";
 								$result1 = mysqli_query($conn, $sql1);
 								while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
 									$id_std =  $row1['id_std'];
@@ -77,7 +77,7 @@ if(isset($_GET["send_exam"])){
 						VALUES (NULL, '$id_std', '$id_series_exam', '$List_series_exam', '$Ans', '$result_point', '$point_sum', '0');";
 						if($conn->query($sql)===TRUE){
 
-							$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std";
+							$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std AND IsUse = 1;";
 								$result1 = mysqli_query($conn, $sql1);
 								while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
 									$id_std =  $row1['id_std'];
@@ -119,7 +119,7 @@ if(isset($_POST["change_pass"])){
 		$pass_new = $_POST['pass_new'];
 		$pass_new2 = $_POST['pass_new2'];
 
-		$strSQL = "SELECT * FROM `manage_std` WHERE `id_std` = '$id_std' AND `password_std` = '$pass_old'";
+		$strSQL = "SELECT * FROM `manage_std` WHERE `id_std` = '$id_std' AND `password_std` = '$pass_old' AND IsUse = 1;";
 		$result = mysqli_query($conn, $strSQL);
 		if($pass_new != $pass_new2 ){
 			header('Location:Change_password.php?false2=false2&id_std='.$id_std);
@@ -147,7 +147,7 @@ if(isset($_POST["change_pass_web"])){
 		$pass_new = $_POST['pass_new'];
 		$pass_new2 = $_POST['pass_new2'];
 
-		$strSQL = "SELECT * FROM `manage_std` WHERE `id_std` = '$id_std' AND `password_std` = '$pass_old'";
+		$strSQL = "SELECT * FROM `manage_std` WHERE `id_std` = '$id_std' AND `password_std` = '$pass_old' AND IsUse = 1;";
 		$result = mysqli_query($conn, $strSQL);
 		if($pass_new != $pass_new2 ){
 			header('Location:Change_password_Web.php?false2=false2&id_std='.$id_std);

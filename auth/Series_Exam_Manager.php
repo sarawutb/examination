@@ -161,7 +161,7 @@ session_start();
 			<select name="year_std_series_exam" class="form-control" required="required">
 				<option value="">เลือกรหัสปีการศึกษา</option>
 				<?php
-					$sql2 = "SELECT DISTINCT `year_std` FROM `manage_std` ORDER BY `manage_std`.`year_std` ASC";
+					$sql2 = "SELECT DISTINCT `year_std` FROM `manage_std` WHERE IsUse = 1 ORDER BY `manage_std`.`year_std` ASC";
                     $result2 = mysqli_query($conn, $sql2);
                     while ($row2 = mysqli_fetch_array($result2,MYSQLI_ASSOC)) {
 							$year_std = $row2['year_std'];

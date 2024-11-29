@@ -26,7 +26,7 @@
 
 	function getUserByEmailAndPassword($email, $password){
 		global $connection;
-		$query = "SELECT * FROM `manage_std` WHERE `id_std` = '{$email}' and `password_std` = '{$password}'";
+		$query = "SELECT * FROM `manage_std` WHERE `id_std` = '{$email}' and `password_std` = '{$password}' AND IsUse = 1;";
 	
 		$user = mysqli_query($connection, $query);
 		
@@ -43,7 +43,7 @@
 
 	function emailExists($email){
 		global $connection;
-		$query = "SELECT `id_std` FROM `manage_std` WHERE `id_std` = '{$email}'";
+		$query = "SELECT `id_std` FROM `manage_std` WHERE `id_std` = '{$email}' AND IsUse = 1;";
 
 		$result = mysqli_query($connection, $query);
 

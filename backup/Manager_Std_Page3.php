@@ -116,7 +116,7 @@ session_start();
 			</b><br>
 
 			<?php
-			$sql1 = "SELECT DISTINCT `degree_std`,`section_std` FROM `manage_std` WHERE branch_id_std = '$branch_id' AND genre_std = '$genre_std' ORDER BY `manage_std`.`degree_std` ASC";
+			$sql1 = "SELECT DISTINCT `degree_std`,`section_std` FROM `manage_std` WHERE branch_id_std = '$branch_id' AND genre_std = '$genre_std' AND IsUse = 1 ORDER BY `manage_std`.`degree_std` ASC";
                     $result1 = mysqli_query($conn, $sql1);
 					//$number = 1;
                     while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
@@ -261,7 +261,7 @@ session_start();
 
   <?php
   $i = 1;
-	$sql = "SELECT * FROM `manage_std`";
+	$sql = "SELECT * FROM `manage_std` WHERE IsUse = 1;";
 	$result = mysqli_query($conn, $sql);
 	while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
   ?>
