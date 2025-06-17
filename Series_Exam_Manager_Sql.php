@@ -19,8 +19,6 @@ function DateThai($strDate)
 	return "$strYear-$strMonth-$strDay $strHour:$strMinute:$strSeconds";
 }
 
-
-
 if (isset($_POST["add_series_exam"])) {
 
 	$num_exam_value = null;
@@ -130,8 +128,8 @@ if (isset($_POST["add_series_exam"])) {
 			//echo $datetime_END."<br>";
 		}
 	}
-	if ($type_series_exam1 == null && $num_exam_value1 == null) {
-		echo AlertMsg('โปรดเลือกข้อสอบปรนัยมากกว่า 1 ข้อ', 2);
+	if ($type_series_exam1 == null && $type_series_exam2 == null) {
+		echo AlertMsg('โปรดเลือกข้อสอบมากกว่า 1 ข้อ', 2);;
 	} else {
 		if ($type_series_exam1 != null && $num_exam_value1 == null) {
 			echo AlertMsg('โปรดเลือกข้อสอบปรนัยมากกว่า 1 ข้อ', 2);
