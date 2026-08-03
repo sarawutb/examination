@@ -1,4 +1,4 @@
-				<!-- <input hidden type="text" name="type_series_exam1[]" value="1"> -->
+<!-- <input hidden type="text" name="type_series_exam1[]" value="1"> -->
 				<?php
 				include("connect.php");
 				$id_subject = $_GET['id_subject'];
@@ -13,15 +13,11 @@
             $x = 0;
 						while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
 							$data_id =  $row['id'];
-							// $data_num_chapter =  $row['num_chapter'];
 							$data_name_chapter =  $row['name_chapter'];
 
-							// $data_objective_chapter =  $row['objective_chapter'];
-						//	$list_exam =  $row['list_series_exam'];
             $sql1 = "SELECT count(manager_exam.id) as sum_exam FROM `manager_chapter`
 								INNER JOIN manager_exam on manager_exam.chapter_id_exam = manager_chapter.id
 								WHERE manager_exam.chapter_id_exam = $data_id";
-					//	$result1 = mysqli_query($conn, $sql1);
             $result1 = $conn->query($sql1);
 						while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
               $sum_exam =  $row1['sum_exam'];
@@ -31,20 +27,6 @@
 						<div class="card-header">
 						<div class="row">
 						<div id="empty_bar<?php echo $a; ?>" class="col-sm-12" >
-              <!-- <div class="form-group">
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <?php echo $type_series_exam; ?>
-                  <input <?php if($type_series_exam == 1){echo "checked";} ?> onclick="select_checkbox<?php echo $a; ?>()" type="radio" class="form-check-input" id="radio_select<?php echo $x++; ?>" name="optradio<?php echo $a; ?>">แบบเลือกทีละข้อ
-                </label>
-              </div>
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input <?php if($type_series_exam == 2){echo "checked";} ?> onclick="select_custom<?php echo $a; ?>()" type="radio" class="form-check-input" id="radio_select<?php echo $x++; ?>" name="optradio<?php echo $a; ?>">แบบกำหนดเอง
-                </label>
-              </div>
-
-              </div> -->
 
 
               <input class="no-collapsable" type="checkbox" id="Check_All1<?php echo $a; ?>" onclick="check_unCheck_All11<?php echo $a; ?>()">
@@ -63,7 +45,6 @@
                 ตั้งแต่ข้อ&nbsp;
                 <input id="myInput1<?php echo $a; ?>" onchange="limit1<?php echo $a; ?>(this);" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" style="width:70px" type="text" class="form-control" name="">&nbsp;ถึง&nbsp;
                 <input id="myInput12<?php echo $a; ?>" onchange="limit2<?php echo $a; ?>(this);" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" style="width:70px" type="text" class="form-control" name="">
-                <!-- <button id="submit_btn" type="button" onclick="min1()"></button> -->
 
             </div>
             <script>
@@ -76,8 +57,6 @@
                         var max = parseInt(document.getElementById("myInput12<?=$a;?>").value);
 
 
-
-                        //if(element.value.length > max_chars) {
                         if(number > maxinput){
                             document.getElementById("myInput1<?=$a;?>").value = maxinput;
                             number = maxinput;
@@ -114,10 +93,7 @@
                       var min = parseInt(document.getElementById("myInput1<?=$a;?>").value);
 
 
-
-                      //if(element.value.length > max_chars) {
                       if(number > maxinput){
-                          //element.value = element.value.substr(0, max_chars);
                           document.getElementById("myInput12<?=$a;?>").value = maxinput;
                           number = maxinput;
                       }else if(number == '0'){
@@ -150,15 +126,10 @@
 
 
               <table class="table table-bordered" id="dataTable1" width="50%" cellspacing="0">
-                <!-- <thead> -->
-
-                <!-- </thead> -->
                   <tr>
                     <th width="5%">
                       เลือก
-                      <!-- <input type="checkbox" id="Check_All1<?php echo $a; ?>" onclick="check_unCheck_All11<?php echo $a; ?>()"> -->
                     </th>
-                    <!-- <th width="10%">ข้อสอบที่</th> -->
 
                     <th  width="95%">โจทย์</th>
                   </tr>
@@ -169,7 +140,6 @@
 						$sql1 = "SELECT manager_exam.id,manager_exam.proposition_exam FROM `manager_chapter`
 								INNER JOIN manager_exam on manager_exam.chapter_id_exam = manager_chapter.id
 								WHERE manager_exam.chapter_id_exam = $data_id";
-					//	$result1 = mysqli_query($conn, $sql1);
             $result1 = $conn->query($sql1);
 						$num_chapter = 1;
 						$b = 1;
@@ -207,27 +177,9 @@
 
 
                 <script>
-                //  document.getElementById('Check_All1<?= $a; ?>').disabled = true;
-                //  document.getElementById('empty_bar<?= $a; ?>').disabled = true;
                 </script>
               </div>
               <script>
-              // function select_checkbox<?php echo $a; ?>() {
-              //   document.getElementById("Check_All1<?php echo $a; ?>").hidden = false;
-              //   document.getElementById("dataTable1").hidden = false;
-              // //  document.getElementById("dataTable2").hidden = true;
-              //    document.getElementById("input_custom<?php echo $a; ?>").hidden = true;
-              // }
-              // function select_custom<?php echo $a; ?>() {
-              //   // document.getElementById("tr_up<?php echo $a; ?>").hidden = true;
-              //
-              //   // document.getElementById("tr_down<?php echo $a.$list; ?>").hidden = true;
-              //
-              //   document.getElementById("Check_All1<?php echo $a; ?>").hidden = true;
-              //   document.getElementById("dataTable1").hidden = true;
-              // //  document.getElementById("dataTable2").hidden = false;
-              //    document.getElementById("input_custom<?php echo $a; ?>").hidden = false;
-              // }
               </script>
 
 
@@ -274,7 +226,6 @@
 	 var cout=1;
 	 var xxx = <?=$sum_exam?>;
 
-	 //var xxx = parseInt(document.getElementById("test").value);
 	<?php
 				$sql = "SELECT * FROM `manager_chapter` WHERE name_name_subject = '$id_subject' ORDER BY `manager_chapter`.`id` ASC";
 							$result = mysqli_query($conn, $sql);
@@ -315,7 +266,6 @@
 
 
 	<?php $i++; }?>
-	//cout = cout+1;
 	cout++;
 	}
 
@@ -328,38 +278,6 @@
 
 
 	<script type="text/javascript">
-	// <?php
-	// 			$sql = "SELECT * FROM `manager_chapter` WHERE name_name_subject = '$id_subject' ORDER BY `manager_chapter`.`id` ASC";
-	// 						$result = mysqli_query($conn, $sql);
-	// 						$a = 0;
-	// 						while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
-	// 							$data_id =  $row['id'];
-	//  ?>
-	// function check_unCheck_All11<?php echo $a; ?>(){
-	// 	 var checkedVal = document.getElementById("Check_All1<?php echo $a; ?>");
-	// 	 <?php
-	// 					$sql1 = "SELECT manager_exam.id,manager_exam.proposition_exam FROM `manager_chapter`
-	// 								INNER JOIN manager_exam on manager_exam.chapter_id_exam = manager_chapter.id
-	// 								WHERE manager_exam.chapter_id_exam = $data_id";
-	// 						$result1 = mysqli_query($conn, $sql1);
-	// 						$i = 0;
-	// 						while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
-	// 	 ?>
-	//  if(checkedVal.checked==true){
-	// 		document.getElementById("id<?php echo $a.$i; ?>").checked = true;
-	//     //document.getElementById("Check_All11").checked = true;
-	//     if(document.getElementById("id<?php echo $a.$i; ?>").checked == true){
-	//       checkedVal.checked = true;
-	//     }
-	//
-	//  }else{
-	// 		document.getElementById("id<?php echo $a.$i; ?>").checked = false;
-	//
-	//  }
-	//
-	// <?php //$i++; }?>
-	// }
-	// <?php// $a++; } ?>
 
 	<?php
 	$sql = "SELECT * FROM `manager_chapter` WHERE name_name_subject = '$id_subject' ORDER BY `manager_chapter`.`id` ASC";
