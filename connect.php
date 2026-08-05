@@ -8,7 +8,6 @@ header('Content-Type: text/html; charset=utf-8');
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "chullamane_learn";
-
+$dbname = "chullamane_learn4";
 $conn = new mysqli($servername, $username, $password, $dbname);
 mysqli_query($conn, "SET NAMES 'utf8' ");
