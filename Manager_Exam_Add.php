@@ -169,9 +169,14 @@ if (isset($_POST["id_chapter"])) {
 							<div class="col-sm-5">
 								<div class="card-header d-flex justify-content-between align-items-center">
 									<span><i class='far'>&#xf044;</i> เพิ่มข้อสอบแบบปรนัย</span>
-									<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#importExcelModal">
-										<i class="fas fa-file-excel"></i> นำเข้าด้วย Excel
-									</button>
+									<div>
+										<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#importExcelModal">
+											<i class="fas fa-file-excel"></i> นำเข้าด้วย Excel
+										</button>
+										<button type="button" class="btn btn-primary btn-sm ml-1" data-toggle="modal" data-target="#importWordModal">
+											<i class="fas fa-file-word"></i> นำเข้าด้วย Word
+										</button>
+									</div>
 								</div>
 								<div class="card mb-3">
 									<div class="card-body">
@@ -970,55 +975,65 @@ if (isset($_POST["id_chapter"])) {
 
 
 	<!-- Modal นำเข้าข้อสอบด้วย Excel -->
-	<div class="modal fade" id="importExcelModal" tabindex="-1" role="dialog" aria-labelledby="importExcelModalLabel" aria-hidden="true">
-	  <div class="modal-dialog modal-lg" role="document">
+	<div class="modal fade" id="importExcelModal" tabindex="-1" role="dialog" aria-labelledby="importExcelModalLabel" aria-hidden="true" data-backdrop="static">
+	  <div class="modal-dialog modal-lg" id="importExcelModalDialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header bg-success text-white">
-	        <h5 class="modal-title" id="importExcelModalLabel"><i class="fas fa-file-excel"></i> นำเข้าข้อสอบปรนัยผ่าน Excel</h5>
+	        <h5 class="modal-title" id="importExcelModalTitle"><i class="fas fa-file-excel"></i> นำเข้าข้อสอบปรนัยผ่าน Excel</h5>
 	        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
 	          <span aria-hidden="true">&times;</span>
 	        </button>
 	      </div>
-	      <form action="Manager_Exam_Import_Sql.php" method="POST" enctype="multipart/form-data">
-	        <div class="modal-body">
-	          <input type="hidden" name="id_chapter" value="<?php echo $id_chapter; ?>">
-	          <input type="hidden" name="import_type" value="mc">
-	          
-	          <div class="upload-container" style="background-color: #f8f9fa; border-radius: 8px; padding: 15px;">
-	            <div class="border-container text-center" style="border: 3px dashed #cbd5e1; border-radius: 6px; padding: 25px;">
-	              <div class="icons text-muted mb-2">
-	                <i class="fas fa-file-excel fa-4x" style="color: #28a745; opacity: 0.85;"></i>
+
+	      <!-- Step 1: Upload File Form -->
+	      <div id="excelUploadStep">
+	        <form id="formImportExcelMC" action="Manager_Exam_Import_Sql.php" method="POST" enctype="multipart/form-data">
+	          <div class="modal-body">
+	            <input type="hidden" name="id_chapter" value="<?php echo $id_chapter; ?>">
+	            <input type="hidden" name="import_type" value="mc">
+	            
+	            <div class="upload-container" style="background-color: #f8f9fa; border-radius: 8px; padding: 15px;">
+	              <div class="border-container text-center" style="border: 3px dashed #cbd5e1; border-radius: 6px; padding: 25px;">
+	                <div class="icons text-muted mb-2">
+	                  <i class="fas fa-file-excel fa-4x" style="color: #28a745; opacity: 0.85;"></i>
+	                </div>
+	                <div id="nameFileMC" class="mb-2" style="display:none;">
+	                  <h5 id="fileNameMC" class="text-success font-weight-bold"></h5>
+	                </div>
+	                <input type="file" name="excel_file" id="excelFileInputMC" accept=".xlsx, .csv" style="display: none;" required onchange="showExcelFileNameMC(this)">
+	                <p class="mb-1" style="font-size: 1.1em; font-weight: 600; color: #1e293b;">
+	                  กรุณา 
+	                  <label for="excelFileInputMC" class="btn btn-primary btn-sm mx-1 mb-0" style="cursor:pointer;">
+	                    <i class="fas fa-folder-open"></i> เลือกไฟล์
+	                  </label>
+	                  สกุล .XLSX หรือ .CSV
+	                </p>
+	                <small class="text-muted d-block mt-2">
+	                  *โครงสร้างคอลัมน์: A=ข้อที่, B=โจทย์คำถาม, C-G=ตัวเลือก 1-5, H=เฉลย (1-5 หรือ ก-จ)
+	                </small>
 	              </div>
-	              <div id="nameFileMC" class="mb-2" style="display:none;">
-	                <h5 id="fileNameMC" class="text-success font-weight-bold"></h5>
-	              </div>
-	              <input type="file" name="excel_file" id="excelFileInputMC" accept=".xlsx, .csv" style="display: none;" required onchange="showExcelFileNameMC(this)">
-	              <p class="mb-1" style="font-size: 1.1em; font-weight: 600; color: #1e293b;">
-	                กรุณา 
-	                <label for="excelFileInputMC" class="btn btn-primary btn-sm mx-1 mb-0" style="cursor:pointer;">
-	                  <i class="fas fa-folder-open"></i> เลือกไฟล์
-	                </label>
-	                สกุล .XLSX หรือ .CSV
-	              </p>
-	              <small class="text-muted d-block mt-2">
-	                *โครงสร้างคอลัมน์: A=ข้อที่, B=โจทย์คำถาม, C-G=ตัวเลือก 1-5, H=เฉลย (1-5 หรือ ก-จ)
-	              </small>
+	            </div>
+
+	            <div class="alert alert-info mt-3 mb-0">
+	              <i class="fas fa-info-circle"></i> ท่านสามารถดาวน์โหลดไฟล์ตัวอย่าง Template สำหรับกรอกข้อสอบได้ที่นี่:
+	              <br>
+	              <a href="templates/exam_import_template_mc.xlsx" class="btn btn-warning btn-sm mt-2" download>
+	                <i class="fas fa-download"></i> ดาวน์โหลด Template Excel ข้อสอบปรนัย
+	              </a>
 	            </div>
 	          </div>
-
-	          <div class="alert alert-info mt-3 mb-0">
-	            <i class="fas fa-info-circle"></i> ท่านสามารถดาวน์โหลดไฟล์ตัวอย่าง Template สำหรับกรอกข้อสอบได้ที่นี่:
-	            <br>
-	            <a href="templates/exam_import_template.xlsx" class="btn btn-warning btn-sm mt-2" download>
-	              <i class="fas fa-download"></i> ดาวน์โหลด Template Excel
-	            </a>
+	          <div class="modal-footer">
+	            <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+	            <button type="submit" id="btnCheckExcelMC" class="btn btn-success"><i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า</button>
 	          </div>
-	        </div>
-	        <div class="modal-footer">
-	          <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-	          <button type="submit" name="import_excel" class="btn btn-success"><i class="fas fa-upload"></i> นำเข้าข้อมูล</button>
-	        </div>
-	      </form>
+	        </form>
+	      </div>
+
+	      <!-- Step 2: Preview & Confirm (Hidden by default) -->
+	      <div id="excelPreviewStep" style="display: none;" class="modal-body p-4">
+	        <!-- HTML สกัดจาก AJAX จะมาแสดงตรงนี้ -->
+	      </div>
+
 	    </div>
 	  </div>
 	</div>
@@ -1032,6 +1047,186 @@ if (isset($_POST["id_chapter"])) {
 	    document.getElementById('nameFileMC').style.display = 'none';
 	  }
 	}
+
+	function resetExcelModalMC() {
+	  $('#excelPreviewStep').hide().empty();
+	  $('#excelUploadStep').show();
+	  $('#importExcelModalDialog').removeClass('modal-xl').addClass('modal-lg');
+	  $('#importExcelModalTitle').html('<i class="fas fa-file-excel"></i> นำเข้าข้อสอบปรนัยผ่าน Excel');
+	  $('#excelFileInputMC').val('');
+	  $('#fileNameMC').text('');
+	  $('#nameFileMC').hide();
+	  $('#btnCheckExcelMC').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
+	}
+
+	$(document).ready(function() {
+	  $('#importExcelModal').on('hidden.bs.modal', function() {
+	    resetExcelModalMC();
+	  });
+
+	  $(document).on('click', '.btn-cancel-excel-preview', function() {
+	    resetExcelModalMC();
+	  });
+
+	  $('#formImportExcelMC').on('submit', function(e) {
+	    e.preventDefault();
+	    var formData = new FormData(this);
+	    formData.append('ajax_parse_excel', '1');
+
+	    $('#btnCheckExcelMC').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> กำลังอ่านไฟล์ Excel...');
+
+	    $.ajax({
+	      url: 'Manager_Exam_Import_Sql.php',
+	      type: 'POST',
+	      data: formData,
+	      processData: false,
+	      contentType: false,
+	      dataType: 'json',
+	      success: function(res) {
+	        $('#btnCheckExcelMC').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
+	        if (res.status) {
+	          $('#excelUploadStep').hide();
+	          $('#excelPreviewStep').html(res.html).show();
+	          $('#importExcelModalDialog').removeClass('modal-lg').addClass('modal-xl');
+	          $('#importExcelModalTitle').html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบจากไฟล์ Excel ก่อนนำเข้า');
+	        } else {
+	          alert('เกิดข้อผิดพลาด: ' + res.error);
+	        }
+	      },
+	      error: function(xhr) {
+	        $('#btnCheckExcelMC').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
+	        alert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + xhr.responseText);
+	      }
+	    });
+	  });
+	});
+	</script>
+
+	<!-- Modal นำเข้าข้อสอบด้วย Word -->
+	<div class="modal fade" id="importWordModal" tabindex="-1" role="dialog" aria-labelledby="importWordModalLabel" aria-hidden="true" data-backdrop="static">
+	  <div class="modal-dialog modal-lg" id="importWordModalDialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header bg-primary text-white">
+	        <h5 class="modal-title" id="importWordModalTitle"><i class="fas fa-file-word"></i> นำเข้าข้อสอบปรนัยผ่าน Microsoft Word (.docx)</h5>
+	        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+
+	      <!-- Step 1: Upload File Form -->
+	      <div id="wordUploadStep">
+	        <form id="formImportWordMC" action="Manager_Exam_Import_Word_Sql.php" method="POST" enctype="multipart/form-data">
+	          <div class="modal-body">
+	            <input type="hidden" name="id_chapter" value="<?php echo $id_chapter; ?>">
+	            <input type="hidden" name="import_type" value="mc">
+	            
+	            <div class="upload-container" style="background-color: #f8f9fa; border-radius: 8px; padding: 15px;">
+	              <div class="border-container text-center" style="border: 3px dashed #cbd5e1; border-radius: 6px; padding: 25px;">
+	                <div class="icons text-muted mb-2">
+	                  <i class="fas fa-file-word fa-4x" style="color: #007bff; opacity: 0.85;"></i>
+	                </div>
+	                <div id="nameFileWordMC" class="mb-2" style="display:none;">
+	                  <h5 id="fileNameWordMC" class="text-primary font-weight-bold"></h5>
+	                </div>
+	                <input type="file" name="word_file" id="wordFileInputMC" accept=".docx" style="display: none;" required onchange="showWordFileNameMC(this)">
+	                <p class="mb-1" style="font-size: 1.1em; font-weight: 600; color: #1e293b;">
+	                  กรุณา 
+	                  <label for="wordFileInputMC" class="btn btn-primary btn-sm mx-1 mb-0" style="cursor:pointer;">
+	                    <i class="fas fa-folder-open"></i> เลือกไฟล์ Word
+	                  </label>
+	                  สกุล .DOCX
+	                </p>
+	                <small class="text-muted d-block mt-2">
+	                  *รองรับไฟล์ Word ที่พิมพ์ข้อสอบเรียงข้อ (1. โจทย์..., ก. ตัวเลือก..., เฉลย: ก)
+	                </small>
+	              </div>
+	            </div>
+
+	            <div class="alert alert-info mt-3 mb-0">
+	              <i class="fas fa-info-circle"></i> ท่านสามารถดาวน์โหลดไฟล์ตัวอย่าง Template สำหรับพิมพ์ข้อสอบ Word ได้ที่นี่:
+	              <br>
+	              <a href="templates/exam_import_template_mc.docx" class="btn btn-warning btn-sm mt-2" download>
+	                <i class="fas fa-download"></i> ดาวน์โหลด Template Word ข้อสอบปรนัย (.docx)
+	              </a>
+	            </div>
+	          </div>
+	          <div class="modal-footer">
+	            <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+	            <button type="submit" id="btnCheckWordMC" class="btn btn-primary"><i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า</button>
+	          </div>
+	        </form>
+	      </div>
+
+	      <!-- Step 2: Preview & Confirm (Hidden by default) -->
+	      <div id="wordPreviewStep" style="display: none;" class="modal-body p-4">
+	        <!-- HTML สกัดจาก AJAX จะมาแสดงตรงนี้ -->
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<script>
+	function showWordFileNameMC(input) {
+	  if (input.files && input.files[0]) {
+	    document.getElementById('fileNameWordMC').innerText = 'ไฟล์ที่เลือก: ' + input.files[0].name;
+	    document.getElementById('nameFileWordMC').style.display = 'block';
+	  } else {
+	    document.getElementById('nameFileWordMC').style.display = 'none';
+	  }
+	}
+
+	function resetWordModalMC() {
+	  $('#wordPreviewStep').hide().empty();
+	  $('#wordUploadStep').show();
+	  $('#importWordModalDialog').removeClass('modal-xl').addClass('modal-lg');
+	  $('#importWordModalTitle').html('<i class="fas fa-file-word"></i> นำเข้าข้อสอบปรนัยผ่าน Microsoft Word (.docx)');
+	  $('#wordFileInputMC').val('');
+	  $('#fileNameWordMC').text('');
+	  $('#nameFileWordMC').hide();
+	  $('#btnCheckWordMC').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
+	}
+
+	$(document).ready(function() {
+	  $('#importWordModal').on('hidden.bs.modal', function() {
+	    resetWordModalMC();
+	  });
+
+	  $(document).on('click', '.btn-cancel-word-preview', function() {
+	    resetWordModalMC();
+	  });
+
+	  $('#formImportWordMC').on('submit', function(e) {
+	    e.preventDefault();
+	    var formData = new FormData(this);
+	    formData.append('ajax_parse_word', '1');
+
+	    $('#btnCheckWordMC').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> กำลังสกัดข้อสอบ...');
+
+	    $.ajax({
+	      url: 'Manager_Exam_Import_Word_Sql.php',
+	      type: 'POST',
+	      data: formData,
+	      processData: false,
+	      contentType: false,
+	      dataType: 'json',
+	      success: function(res) {
+	        $('#btnCheckWordMC').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
+	        if (res.status) {
+	          $('#wordUploadStep').hide();
+	          $('#wordPreviewStep').html(res.html).show();
+	          $('#importWordModalDialog').removeClass('modal-lg').addClass('modal-xl');
+	          $('#importWordModalTitle').html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบจากไฟล์ Word ก่อนนำเข้า');
+	        } else {
+	          alert('เกิดข้อผิดพลาด: ' + res.error);
+	        }
+	      },
+	      error: function(xhr) {
+	        $('#btnCheckWordMC').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
+	        alert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + xhr.responseText);
+	      }
+	    });
+	  });
+	});
 	</script>
 
 </body>

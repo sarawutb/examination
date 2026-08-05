@@ -4,213 +4,358 @@ include("connect.php");
 require_once "vendor/excel_parser/ExcelReaderHelper.php";
 
 if (!isset($_SESSION['id_teacher'])) {
-	session_destroy();
-	header("location:Login.php");
-	exit();
+    session_destroy();
+    header("location:Login.php");
+    exit();
 }
 
-if (isset($_POST["import_excel"])) {
-	$id_chapter = isset($_POST["id_chapter"]) ? (int)$_POST["id_chapter"] : 0;
-	$import_type = isset($_POST["import_type"]) ? $_POST["import_type"] : "mc"; // 'mc' (ปรนัย) or 'annotated' (อัตนัย)
+function AlertMsgExcel($msg, $type)
+{
+    if ($type == 1) {
+        return "<script>alert('" . $msg . "');</script>";
+    } else {
+        return "<script>alert('" . $msg . "'); window.history.back();</script>";
+    }
+}
 
-	if ($id_chapter <= 0) {
-		echo "<script language='JavaScript'>
-				alert('ไม่พบไอดีบทเรียนที่ต้องการนำเข้า!');
-				window.history.back();
-			  </script>";
-		exit();
-	}
+// --------------------------------------------------------------------------
+// 1. Confirm Import Action (Save previewed Excel questions into DB)
+// --------------------------------------------------------------------------
+if (isset($_POST['confirm_import_excel'])) {
+    $id_chapter  = isset($_POST['id_chapter']) ? (int)$_POST['id_chapter'] : 0;
+    $import_type = isset($_POST['import_type']) ? $_POST['import_type'] : 'mc';
+    $questions   = isset($_POST['questions']) ? $_POST['questions'] : array();
 
-	if (!isset($_FILES['excel_file']) || $_FILES['excel_file']['error'] !== UPLOAD_ERR_OK) {
-		echo "<script language='JavaScript'>
-				alert('กรุณาเลือกไฟล์ Excel (.xlsx หรือ .csv) ที่ต้องการนำเข้า!');
-				window.history.back();
-			  </script>";
-		exit();
-	}
+    if ($id_chapter <= 0) {
+        echo AlertMsgExcel("ไม่พบไอดีบทเรียน", 2);
+        exit();
+    }
 
-	$tmp_filepath = $_FILES['excel_file']['tmp_name'];
-	$filename = $_FILES['excel_file']['name'];
-	$ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    if (empty($questions)) {
+        echo AlertMsgExcel("ไม่พบรายการข้อสอบที่ยืนยันนำเข้า", 2);
+        exit();
+    }
 
-	if ($ext !== 'xlsx' && $ext !== 'csv') {
-		echo "<script language='JavaScript'>
-				alert('รองรับเฉพาะไฟล์ประเภท .xlsx หรือ .csv เท่านั้น!');
-				window.history.back();
-			  </script>";
-		exit();
-	}
+    $inserted_count = 0;
 
-	$parse_result = ExcelReaderHelper::parseFile($tmp_filepath, $filename);
-	if (!$parse_result['success']) {
-		$err_msg = addslashes($parse_result['error']);
-		echo "<script language='JavaScript'>
-				alert('เกิดข้อผิดพลาดในการอ่านไฟล์: {$err_msg}');
-				window.history.back();
-			  </script>";
-		exit();
-	}
+    if ($import_type === 'annotated') { // Subjective (manager_exam_annotated)
+        $sql = "INSERT INTO `manager_exam_annotated`
+                (`proposition_exam`, `ans_exam`, `chapter_id_exam`)
+                VALUES (?, ?, ?)";
+        $stmt = mysqli_prepare($conn, $sql);
 
-	$sheets = $parse_result['sheets'];
-	$sheetNames = $parse_result['sheetNames'];
+        if ($stmt) {
+            foreach ($questions as $q) {
+                $prop = isset($q['proposition']) ? trim($q['proposition']) : '';
+                $ans  = isset($q['ans']) ? trim($q['ans']) : '';
 
-	$success_count = 0;
-	$error_rows = array();
+                if ($prop !== '') {
+                    mysqli_stmt_bind_param($stmt, "ssi", $prop, $ans, $id_chapter);
+                    if (mysqli_stmt_execute($stmt)) {
+                        $inserted_count++;
+                    }
+                }
+            }
+            mysqli_stmt_close($stmt);
+        }
 
-	if ($import_type === "mc") {
-		// Import Multiple Choice Questions into `manager_exam`
-		// Target sheet: Sheet 0 or named 'ข้อสอบปรนัย'
-		$target_sheet_idx = 0;
-		foreach ($sheetNames as $idx => $sname) {
-			if (mb_strpos($sname, 'ปรนัย') !== false) {
-				$target_sheet_idx = $idx;
-				break;
-			}
-		}
+        echo "<script>
+                alert('นำเข้าข้อสอบอัตนัยจาก Excel สำเร็จจำนวน " . $inserted_count . " ข้อ');
+                window.location.href = 'Manager_Exam_Add_Annotated.php?id_chapter=" . $id_chapter . "';
+              </script>";
+        exit();
 
-		$rows = isset($sheets[$target_sheet_idx]) ? $sheets[$target_sheet_idx] : array();
+    } else { // Multiple Choice (manager_exam)
+        $sql = "INSERT INTO `manager_exam`
+                (`proposition_exam`, `answer1_exam`, `answer2_exam`, `answer3_exam`, `answer4_exam`, `answer5_exam`, `result_exam`, `chapter_id_exam`)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($conn, $sql);
 
-		// Use Prepared Statement for safe insertion in PHP 5.6
-		$sql = "INSERT INTO `manager_exam` 
-				(`id`, `proposition_exam`, `proposition_img_exam`, 
-				 `answer1_exam`, `answer1_img_exam`, 
-				 `answer2_exam`, `answer2_img_exam`, 
-				 `answer3_exam`, `answer3_img_exam`, 
-				 `answer4_exam`, `answer4_img_exam`, 
-				 `answer5_exam`, `answer5_img_exam`, 
-				 `result_exam`, `chapter_id_exam`) 
-				VALUES (NULL, ?, '', ?, '', ?, '', ?, '', ?, '', ?, '', ?, ?)";
-		
-		$stmt = mysqli_prepare($conn, $sql);
+        if ($stmt) {
+            foreach ($questions as $q) {
+                $prop = isset($q['proposition']) ? trim($q['proposition']) : '';
+                $a1   = isset($q['answer1']) ? trim($q['answer1']) : '';
+                $a2   = isset($q['answer2']) ? trim($q['answer2']) : '';
+                $a3   = isset($q['answer3']) ? trim($q['answer3']) : '';
+                $a4   = isset($q['answer4']) ? trim($q['answer4']) : '';
+                $a5   = isset($q['answer5']) ? trim($q['answer5']) : '';
+                $res  = isset($q['result']) ? (int)$q['result'] : 1;
 
-		foreach ($rows as $row_index => $row) {
-			// Skip header row if contains title text
-			if ($row_index === 0) {
-				$first_cell = isset($row[0]) ? trim((string)$row[0]) : '';
-				$second_cell = isset($row[1]) ? trim((string)$row[1]) : '';
-				if (mb_strpos($second_cell, 'โจทย์') !== false || mb_strpos($first_cell, 'ข้อที่') !== false) {
-					continue;
-				}
-			}
+                if ($prop !== '' && $a1 !== '' && $a2 !== '') {
+                    mysqli_stmt_bind_param($stmt, "ssssssii", $prop, $a1, $a2, $a3, $a4, $a5, $res, $id_chapter);
+                    if (mysqli_stmt_execute($stmt)) {
+                        $inserted_count++;
+                    }
+                }
+            }
+            mysqli_stmt_close($stmt);
+        }
 
-			// Column B (idx 1) = proposition
-			// Column C (idx 2) = answer1, D (idx 3) = answer2, E (idx 4) = answer3, F (idx 5) = answer4, G (idx 6) = answer5
-			// Column H (idx 7) = result_exam
-			$proposition = isset($row[1]) ? trim((string)$row[1]) : '';
-			$ans1 = isset($row[2]) ? trim((string)$row[2]) : '';
-			$ans2 = isset($row[3]) ? trim((string)$row[3]) : '';
-			$ans3 = isset($row[4]) ? trim((string)$row[4]) : '';
-			$ans4 = isset($row[5]) ? trim((string)$row[5]) : '';
-			$ans5 = isset($row[6]) ? trim((string)$row[6]) : '';
-			$raw_result = isset($row[7]) ? trim((string)$row[7]) : '';
+        echo "<script>
+                alert('นำเข้าข้อสอบปรนัยจาก Excel สำเร็จจำนวน " . $inserted_count . " ข้อ');
+                window.location.href = 'Manager_Exam_Add.php?id_chapter=" . $id_chapter . "';
+              </script>";
+        exit();
+    }
+}
 
-			// If empty row, skip
-			if (empty($proposition) && empty($ans1) && empty($ans2)) {
-				continue;
-			}
+// --------------------------------------------------------------------------
+// 2. Parse Excel File via AJAX and Return Preview HTML Snippet
+// --------------------------------------------------------------------------
+if (isset($_POST['ajax_parse_excel']) || isset($_POST['import_excel_ajax'])) {
+    header('Content-Type: application/json; charset=utf-8');
 
-			// Validate mandatory fields
-			if (empty($proposition)) {
-				$error_rows[] = "แถวที่ " . ($row_index + 1) . ": ไม่ระบุโจทย์คำถาม";
-				continue;
-			}
+    $id_chapter  = isset($_POST['id_chapter']) ? (int)$_POST['id_chapter'] : 0;
+    $import_type = isset($_POST['import_type']) ? $_POST['import_type'] : 'mc';
 
-			if (empty($ans1) || empty($ans2) || empty($ans3) || empty($ans4)) {
-				$error_rows[] = "แถวที่ " . ($row_index + 1) . ": ตัวเลือกที่ 1-4 ต้องไม่เป็นค่าว่าง";
-				continue;
-			}
+    if (!isset($_FILES['excel_file']) || $_FILES['excel_file']['error'] !== UPLOAD_ERR_OK) {
+        echo json_encode(array('status' => false, 'error' => 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์ Excel'));
+        exit();
+    }
 
-			$norm_result = ExcelReaderHelper::normalizeAnswerKey($raw_result);
-			if ($norm_result < 1 || $norm_result > 5) {
-				$error_rows[] = "แถวที่ " . ($row_index + 1) . ": เฉลยคำตอบไม่ถูกต้อง ('{$raw_result}') ต้องเป็น 1-5 หรือ ก-จ";
-				continue;
-			}
+    $filename     = $_FILES['excel_file']['name'];
+    $tmp_filepath = $_FILES['excel_file']['tmp_name'];
+    $ext          = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
-			if ($stmt) {
-				mysqli_stmt_bind_param($stmt, "ssssssii", 
-					$proposition, $ans1, $ans2, $ans3, $ans4, $ans5, $norm_result, $id_chapter
-				);
-				if (mysqli_stmt_execute($stmt)) {
-					$success_count++;
-				} else {
-					$error_rows[] = "แถวที่ " . ($row_index + 1) . ": บันทึกลงฐานข้อมูลล้มเหลว (" . mysqli_error($conn) . ")";
-				}
-			}
-		}
+    if ($ext !== 'xlsx' && $ext !== 'csv') {
+        echo json_encode(array('status' => false, 'error' => 'รองรับเฉพาะไฟล์เอกสารประเภท .xlsx หรือ .csv เท่านั้น'));
+        exit();
+    }
 
-		if ($stmt) {
-			mysqli_stmt_close($stmt);
-		}
+    $parse_result = ExcelReaderHelper::parseFile($tmp_filepath, $filename);
+    if (!$parse_result['success']) {
+        echo json_encode(array('status' => false, 'error' => $parse_result['error']));
+        exit();
+    }
 
-	} else if ($import_type === "annotated") {
-		// Import Subjective Questions into `manager_exam_annotated`
-		$target_sheet_idx = 0;
-		foreach ($sheetNames as $idx => $sname) {
-			if (mb_strpos($sname, 'อัตนัย') !== false) {
-				$target_sheet_idx = $idx;
-				break;
-			}
-		}
+    $sheets     = $parse_result['sheets'];
+    $sheetNames = $parse_result['sheetNames'];
 
-		$rows = isset($sheets[$target_sheet_idx]) ? $sheets[$target_sheet_idx] : array();
+    $questions = array();
 
-		$sql = "INSERT INTO `manager_exam_annotated` 
-				(`id`, `proposition_exam`, `proposition_img_exam`, `ans_exam`, `chapter_id_exam`) 
-				VALUES (NULL, ?, '', ?, ?)";
-		
-		$stmt = mysqli_prepare($conn, $sql);
+    if ($import_type === "mc") {
+        $target_sheet_idx = 0;
+        foreach ($sheetNames as $idx => $sname) {
+            if (mb_strpos($sname, 'ปรนัย') !== false) {
+                $target_sheet_idx = $idx;
+                break;
+            }
+        }
 
-		foreach ($rows as $row_index => $row) {
-			if ($row_index === 0) {
-				$first_cell = isset($row[0]) ? trim((string)$row[0]) : '';
-				$second_cell = isset($row[1]) ? trim((string)$row[1]) : '';
-				if (mb_strpos($second_cell, 'โจทย์') !== false || mb_strpos($first_cell, 'ข้อที่') !== false) {
-					continue;
-				}
-			}
+        $rows = isset($sheets[$target_sheet_idx]) ? $sheets[$target_sheet_idx] : array();
 
-			// Column B (idx 1) = proposition
-			// Column C (idx 2) = ans_annotated
-			$proposition = isset($row[1]) ? trim((string)$row[1]) : '';
-			$ans_annotated = isset($row[2]) ? trim((string)$row[2]) : '';
+        foreach ($rows as $row_index => $row) {
+            if ($row_index === 0) {
+                $first_cell  = isset($row[0]) ? trim((string)$row[0]) : '';
+                $second_cell = isset($row[1]) ? trim((string)$row[1]) : '';
+                if (mb_strpos($second_cell, 'โจทย์') !== false || mb_strpos($first_cell, 'ข้อที่') !== false) {
+                    continue;
+                }
+            }
 
-			if (empty($proposition) && empty($ans_annotated)) {
-				continue;
-			}
+            $proposition = isset($row[1]) ? trim((string)$row[1]) : '';
+            $ans1        = isset($row[2]) ? trim((string)$row[2]) : '';
+            $ans2        = isset($row[3]) ? trim((string)$row[3]) : '';
+            $ans3        = isset($row[4]) ? trim((string)$row[4]) : '';
+            $ans4        = isset($row[5]) ? trim((string)$row[5]) : '';
+            $ans5        = isset($row[6]) ? trim((string)$row[6]) : '';
+            $raw_result  = isset($row[7]) ? trim((string)$row[7]) : '';
 
-			if (empty($proposition)) {
-				$error_rows[] = "แถวที่ " . ($row_index + 1) . ": ไม่ระบุโจทย์คำถาม";
-				continue;
-			}
+            if (empty($proposition) && empty($ans1) && empty($ans2)) {
+                continue;
+            }
 
-			if ($stmt) {
-				mysqli_stmt_bind_param($stmt, "ssi", $proposition, $ans_annotated, $id_chapter);
-				if (mysqli_stmt_execute($stmt)) {
-					$success_count++;
-				} else {
-					$error_rows[] = "แถวที่ " . ($row_index + 1) . ": บันทึกลงฐานข้อมูลล้มเหลว (" . mysqli_error($conn) . ")";
-				}
-			}
-		}
+            $is_valid = true;
+            $errors   = array();
 
-		if ($stmt) {
-			mysqli_stmt_close($stmt);
-		}
-	}
+            if (empty($proposition)) {
+                $is_valid = false;
+                $errors[] = 'ไม่ระบุโจทย์คำถาม';
+            }
 
-	// Prepare feedback message
-	$msg = "นำเข้าข้อสอบสำเร็จจำนวน {$success_count} ข้อ";
-	if (count($error_rows) > 0) {
-		$msg .= "\\n\\nข้อผิดพลาดที่พบ (" . count($error_rows) . " รายการ):\\n" . implode("\\n", array_slice($error_rows, 0, 10));
-		if (count($error_rows) > 10) {
-			$msg .= "\\n...และข้อผิดพลาดอื่นอีก " . (count($error_rows) - 10) . " รายการ";
-		}
-	}
+            if (empty($ans1) || empty($ans2)) {
+                $is_valid = false;
+                $errors[] = 'ตัวเลือก 1-2 ต้องไม่เป็นว่าง';
+            }
 
-	$msg_escaped = addslashes($msg);
-	echo "<script language='JavaScript'>
-			alert('{$msg_escaped}');
-			window.location.href = '" . $_SERVER['HTTP_REFERER'] . "';
-		  </script>";
-	exit();
+            $norm_result = ExcelReaderHelper::normalizeAnswerKey($raw_result);
+            if ($norm_result < 1 || $norm_result > 5) {
+                $is_valid = false;
+                $errors[] = "เฉลยไม่ถูกต้อง ('{$raw_result}')";
+                $norm_result = 1;
+            }
+
+            $questions[] = array(
+                'proposition' => $proposition,
+                'answer1'     => $ans1,
+                'answer2'     => $ans2,
+                'answer3'     => $ans3,
+                'answer4'     => $ans4,
+                'answer5'     => $ans5,
+                'result'      => $norm_result,
+                'is_valid'    => $is_valid,
+                'errors'      => $errors
+            );
+        }
+
+    } else { // annotated
+        $target_sheet_idx = 0;
+        foreach ($sheetNames as $idx => $sname) {
+            if (mb_strpos($sname, 'อัตนัย') !== false) {
+                $target_sheet_idx = $idx;
+                break;
+            }
+        }
+
+        $rows = isset($sheets[$target_sheet_idx]) ? $sheets[$target_sheet_idx] : array();
+
+        foreach ($rows as $row_index => $row) {
+            if ($row_index === 0) {
+                $first_cell  = isset($row[0]) ? trim((string)$row[0]) : '';
+                $second_cell = isset($row[1]) ? trim((string)$row[1]) : '';
+                if (mb_strpos($second_cell, 'โจทย์') !== false || mb_strpos($first_cell, 'ข้อที่') !== false) {
+                    continue;
+                }
+            }
+
+            $proposition   = isset($row[1]) ? trim((string)$row[1]) : '';
+            $ans_annotated = isset($row[2]) ? trim((string)$row[2]) : '';
+
+            if (empty($proposition) && empty($ans_annotated)) {
+                continue;
+            }
+
+            $is_valid = true;
+            $errors   = array();
+
+            if (empty($proposition)) {
+                $is_valid = false;
+                $errors[] = 'ไม่ระบุโจทย์คำถาม';
+            }
+
+            $questions[] = array(
+                'proposition' => $proposition,
+                'ans'         => $ans_annotated,
+                'is_valid'    => $is_valid,
+                'errors'      => $errors
+            );
+        }
+    }
+
+    if (empty($questions)) {
+        echo json_encode(array('status' => false, 'error' => 'ไม่พบข้อมูลข้อสอบในไฟล์ Excel กรุณาตรวจสอบรูปแบบไฟล์'));
+        exit();
+    }
+
+    ob_start();
+    ?>
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> ระบบอ่านข้อมูลจาก Excel ได้ทั้งหมด <b><?php echo count($questions); ?></b> ข้อ จากไฟล์: <b><?php echo htmlspecialchars($filename); ?></b>
+        <br>กรุณาตรวจสอบความถูกต้องของโจทย์ ตัวเลือก และเฉลย ก่อนกดปุ่ม <b>"ยืนยันนำเข้าข้อมูล"</b>
+    </div>
+
+    <form action="Manager_Exam_Import_Sql.php" method="POST" id="formConfirmExcel">
+        <input type="hidden" name="id_chapter" value="<?php echo $id_chapter; ?>">
+        <input type="hidden" name="import_type" value="<?php echo $import_type; ?>">
+
+        <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light sticky-top" style="top: 0; z-index: 10;">
+                    <tr>
+                        <th width="10%" class="text-center">ข้อที่</th>
+                        <th width="<?php echo ($import_type === 'annotated') ? '55%' : '40%'; ?>">โจทย์คำถาม</th>
+                        <?php if ($import_type !== 'annotated') { ?>
+                            <th width="35%">ตัวเลือกคำตอบ & เฉลย</th>
+                        <?php } else { ?>
+                            <th width="25%">แนวทางเฉลย/คำตอบ</th>
+                        <?php } ?>
+                        <th width="10%" class="text-center">สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    $valid_count = 0;
+                    foreach ($questions as $index => $q) { 
+                        $is_valid = isset($q['is_valid']) ? $q['is_valid'] : true;
+                        if ($is_valid) $valid_count++;
+                    ?>
+                        <tr>
+                            <td class="text-center font-weight-bold"><?php echo ($index + 1); ?></td>
+                            <td>
+                                <textarea name="questions[<?php echo $index; ?>][proposition]" class="form-control mb-1" rows="3" required><?php echo htmlspecialchars($q['proposition']); ?></textarea>
+                            </td>
+
+                            <?php if ($import_type !== 'annotated') { ?>
+                                <td>
+                                    <?php for ($c = 1; $c <= 5; $c++) { 
+                                        $val = isset($q['answer' . $c]) ? $q['answer' . $c] : '';
+                                        $is_ans = ($q['result'] == $c);
+                                    ?>
+                                        <div class="input-group mb-2 choice-group-excel" data-choice="<?php echo $c; ?>">
+                                            <span class="input-group-text choice-num-excel <?php echo $is_ans ? 'bg-success text-white font-weight-bold' : ''; ?>">
+                                                <?php echo $c; ?>.
+                                            </span>
+                                            <input type="text" name="questions[<?php echo $index; ?>][answer<?php echo $c; ?>]" class="form-control choice-input-excel <?php echo $is_ans ? 'border-success' : ''; ?>" value="<?php echo htmlspecialchars($val); ?>" placeholder="ตัวเลือกที่ <?php echo $c; ?>">
+                                        </div>
+                                    <?php } ?>
+                                    <div class="mt-2">
+                                        <label class="form-label text-success font-weight-bold me-2"><i class="fas fa-check-circle"></i> เฉลยตัวเลือกที่:</label>
+                                        <select name="questions[<?php echo $index; ?>][result]" class="form-control form-control-sm d-inline-block excel-result-select" style="width: auto;">
+                                            <?php for ($r = 1; $r <= 5; $r++) { ?>
+                                                <option value="<?php echo $r; ?>" <?php if ($q['result'] == $r) echo 'selected'; ?>>ตัวเลือกที่ <?php echo $r; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </td>
+                            <?php } else { ?>
+                                <td>
+                                    <textarea name="questions[<?php echo $index; ?>][ans]" class="form-control" rows="3"><?php echo htmlspecialchars($q['ans']); ?></textarea>
+                                </td>
+                            <?php } ?>
+
+                            <td class="text-center align-middle">
+                                <?php if ($is_valid) { ?>
+                                    <span class="badge badge-success"><i class="fas fa-check"></i> พร้อมนำเข้า</span>
+                                <?php } else { ?>
+                                    <span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> ข้อมูลไม่ครบ</span>
+                                    <small class="text-danger d-block mt-1"><?php echo implode('<br>', $q['errors']); ?></small>
+                                <?php } ?>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal-footer px-0 pb-0 pt-3">
+            <button type="button" class="btn btn-secondary btn-cancel-excel-preview"><i class="fas fa-arrow-left"></i> ย้อนกลับไปเลือกไฟล์ใหม่</button>
+            <button type="submit" name="confirm_import_excel" class="btn btn-success btn-lg" <?php if ($valid_count == 0) echo 'disabled'; ?>>
+                <i class="fas fa-file-import"></i> ยืนยันนำเข้าข้อมูล (<?php echo $valid_count; ?> ข้อ)
+            </button>
+        </div>
+    </form>
+
+    <script>
+    $(document).off('change', '.excel-result-select').on('change', '.excel-result-select', function() {
+        var selectedVal = $(this).val();
+        var $td = $(this).closest('td');
+        
+        $td.find('.choice-num-excel').removeClass('bg-success text-white font-weight-bold');
+        $td.find('.choice-input-excel').removeClass('border-success');
+        
+        $td.find('.choice-group-excel[data-choice="' + selectedVal + '"] .choice-num-excel').addClass('bg-success text-white font-weight-bold');
+        $td.find('.choice-group-excel[data-choice="' + selectedVal + '"] .choice-input-excel').addClass('border-success');
+    });
+    </script>
+    <?php
+    $html = ob_get_clean();
+
+    echo json_encode(array(
+        'status' => true,
+        'html' => $html,
+        'valid_count' => $valid_count,
+        'total_count' => count($questions),
+        'filename' => $filename
+    ));
+    exit();
 }
