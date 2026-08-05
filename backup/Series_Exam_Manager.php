@@ -473,15 +473,6 @@ function check_uncheck_all<?php echo $a; ?>(){
 								$("#degree").html(data);
 							},
 					});
-		//function enable() {
-		//	var x = document.getElementById("degree").value;
-		//	if(x > 0){
-			//	document.getElementById("room").disabled=false;
-			//}else{
-			//	document.getElementById("room").disabled=true;
-			//}
-		//}
-
 		</script>
 
 

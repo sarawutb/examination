@@ -971,7 +971,7 @@ if (isset($_POST["id_chapter"])) {
 
 	<!-- Modal นำเข้าข้อสอบด้วย Excel -->
 	<div class="modal fade" id="importExcelModal" tabindex="-1" role="dialog" aria-labelledby="importExcelModalLabel" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
+	  <div class="modal-dialog modal-lg" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header bg-success text-white">
 	        <h5 class="modal-title" id="importExcelModalLabel"><i class="fas fa-file-excel"></i> นำเข้าข้อสอบปรนัยผ่าน Excel</h5>
@@ -983,29 +983,56 @@ if (isset($_POST["id_chapter"])) {
 	        <div class="modal-body">
 	          <input type="hidden" name="id_chapter" value="<?php echo $id_chapter; ?>">
 	          <input type="hidden" name="import_type" value="mc">
-	          <div class="form-group">
-	            <label><b>เลือกไฟล์ Excel (.xlsx หรือ .csv):</b></label>
-	            <input type="file" name="excel_file" class="form-control-file" accept=".xlsx, .csv" required>
-	            <small class="form-text text-muted mt-2">
-	              *โครงสร้างคอลัมน์: A=ข้อที่, B=โจทย์, C-G=ตัวเลือก 1-5, H=เฉลย (1-5 หรือ ก-จ)
-	            </small>
+	          
+	          <div class="upload-container" style="background-color: #f8f9fa; border-radius: 8px; padding: 15px;">
+	            <div class="border-container text-center" style="border: 3px dashed #cbd5e1; border-radius: 6px; padding: 25px;">
+	              <div class="icons text-muted mb-2">
+	                <i class="fas fa-file-excel fa-4x" style="color: #28a745; opacity: 0.85;"></i>
+	              </div>
+	              <div id="nameFileMC" class="mb-2" style="display:none;">
+	                <h5 id="fileNameMC" class="text-success font-weight-bold"></h5>
+	              </div>
+	              <input type="file" name="excel_file" id="excelFileInputMC" accept=".xlsx, .csv" style="display: none;" required onchange="showExcelFileNameMC(this)">
+	              <p class="mb-1" style="font-size: 1.1em; font-weight: 600; color: #1e293b;">
+	                กรุณา 
+	                <label for="excelFileInputMC" class="btn btn-primary btn-sm mx-1 mb-0" style="cursor:pointer;">
+	                  <i class="fas fa-folder-open"></i> เลือกไฟล์
+	                </label>
+	                สกุล .XLSX หรือ .CSV
+	              </p>
+	              <small class="text-muted d-block mt-2">
+	                *โครงสร้างคอลัมน์: A=ข้อที่, B=โจทย์คำถาม, C-G=ตัวเลือก 1-5, H=เฉลย (1-5 หรือ ก-จ)
+	              </small>
+	            </div>
 	          </div>
-	          <div class="alert alert-info">
+
+	          <div class="alert alert-info mt-3 mb-0">
 	            <i class="fas fa-info-circle"></i> ท่านสามารถดาวน์โหลดไฟล์ตัวอย่าง Template สำหรับกรอกข้อสอบได้ที่นี่:
 	            <br>
-	            <a href="upload/templates/exam_import_template.xlsx" class="btn btn-outline-info btn-sm mt-2" download>
+	            <a href="templates/exam_import_template.xlsx" class="btn btn-warning btn-sm mt-2" download>
 	              <i class="fas fa-download"></i> ดาวน์โหลด Template Excel
 	            </a>
 	          </div>
 	        </div>
 	        <div class="modal-footer">
 	          <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-	          <button type="submit" name="import_excel" class="btn btn-success">นำเข้าข้อมูล</button>
+	          <button type="submit" name="import_excel" class="btn btn-success"><i class="fas fa-upload"></i> นำเข้าข้อมูล</button>
 	        </div>
 	      </form>
 	    </div>
 	  </div>
 	</div>
+
+	<script>
+	function showExcelFileNameMC(input) {
+	  if (input.files && input.files[0]) {
+	    document.getElementById('fileNameMC').innerText = 'ไฟล์ที่เลือก: ' + input.files[0].name;
+	    document.getElementById('nameFileMC').style.display = 'block';
+	  } else {
+	    document.getElementById('nameFileMC').style.display = 'none';
+	  }
+	}
+	</script>
 
 </body>
 

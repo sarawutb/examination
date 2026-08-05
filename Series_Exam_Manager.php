@@ -270,30 +270,43 @@ if ($_SESSION['id_teacher']) {
               </div>
 
               <div class="form-group">
-                <label>สาขา</label>
-                <select style="width:200px" name="branch_id_series_exam" id="branch" class="form-control" required="required">
-
+                <label><b>สาขาที่จัดสอบ (เลือกได้มากกว่า 1 สาขา)</b></label>
+                <div class="mb-2">
+                  <button type="button" class="btn btn-sm btn-outline-primary" id="btnSelectAllBranches">
+                    <i class="fas fa-check-square"></i> เลือกสาขาทั้งหมด
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="btnUnselectAllBranches">
+                    <i class="far fa-square"></i> ไม่เลือกเลย
+                  </button>
+                </div>
+                <div class="card p-3" style="background-color: #f8f9fa; max-height: 200px; overflow-y: auto;">
                   <?php
                   $sql2 = "SELECT DISTINCT `branch_name`,`branch_id` FROM `manager_branch` WHERE `branch_genre` = $genre_subject ORDER BY `manager_branch`.`branch_name` ASC";
                   $result2 = mysqli_query($conn, $sql2);
+                  $b_idx = 1;
                   while ($row2 = mysqli_fetch_array($result2, MYSQLI_ASSOC)) {
                     $branch_name = $row2['branch_name'];
                     $branch_id = $row2['branch_id'];
+
+                    $checked = '';
+                    if (isset($_GET["branch_id_series_exam"])) {
+                      if ($branch_id_series_exam == $branch_id) {
+                        $checked = "checked";
+                      }
+                    } else if (isset($_GET["edit"])) {
+                      if ($branch_id_series_exam == $branch_id) {
+                        $checked = "checked";
+                      }
+                    }
                   ?>
-                    <option <?php if (isset($_GET["branch_id_series_exam"])) {
-                              if ($branch_id_series_exam == $branch_id) {
-                                echo "selected";
-                              }
-                            } else if (isset($_GET["edit"])) {
-                              if ($branch_id_series_exam == $branch_id) {
-                                echo "selected";
-                              }
-                            }
-                            ?> value="<?php echo $branch_id; ?>">
-                      <?php echo $branch_name; ?>
-                    </option>
-                  <?php } ?>
-                </select>
+                    <div class="custom-control custom-checkbox mb-1">
+                      <input type="checkbox" name="branch_id_series_exam[]" value="<?php echo $branch_id; ?>" class="custom-control-input branch-checkbox" id="branch_cb_<?php echo $b_idx; ?>" <?php echo $checked; ?>>
+                      <label class="custom-control-label" for="branch_cb_<?php echo $b_idx; ?>">
+                        <b><?php echo $branch_name; ?></b>
+                      </label>
+                    </div>
+                  <?php $b_idx++; } ?>
+                </div>
               </div>
 
               <div class="form-group">
@@ -627,42 +640,42 @@ if ($_SESSION['id_teacher']) {
     </script>
 
     <script>
-      $(document).ready(function() {
-        $("#branch").change(function() {
-          $.ajax({
-            url: "select_section.php?degree=<?= $year_std_series_exam ?>&branch_id=<?= $branch_id_series_exam ?>", //เรียกใช้งานไฟล์นี้
-            data: "&branch=" + $("#branch").val(), //ส่งตัวแปร
-            type: "POST",
-            async: false,
-            success: function(data, status) {
-              $("#degree").html(data);
-            },
-          });
-          //return flag;
+      function loadDegreeSections() {
+        var selectedBranches = [];
+        $('.branch-checkbox:checked').each(function() {
+          selectedBranches.push($(this).val());
         });
+        
+        var branchStr = selectedBranches.join(',');
+        $.ajax({
+          url: "select_section.php?degree=<?= $year_std_series_exam ?>&branch_id=<?= $branch_id_series_exam ?>",
+          data: "branch=" + encodeURIComponent(branchStr),
+          type: "POST",
+          async: false,
+          success: function(data, status) {
+            $("#degree").html(data);
+          }
+        });
+      }
+
+      $(document).ready(function() {
+        $(document).on('change', '.branch-checkbox', function() {
+          loadDegreeSections();
+        });
+
+        $('#btnSelectAllBranches').click(function() {
+          $('.branch-checkbox').prop('checked', true);
+          loadDegreeSections();
+        });
+
+        $('#btnUnselectAllBranches').click(function() {
+          $('.branch-checkbox').prop('checked', false);
+          loadDegreeSections();
+        });
+
+        loadDegreeSections();
       });
     </script>
-
-
-
-    <script>
-      $.ajax({
-        url: "select_section.php?degree=<?= $year_std_series_exam ?>&branch_id=<?= $branch_id_series_exam ?>", //เรียกใช้งานไฟล์นี้
-        data: "&branch=" + $("#branch").val(), //ส่งตัวแปร
-        type: "POST",
-        async: false,
-        success: function(data, status) {
-          $("#degree").html(data);
-        },
-      });
-      //function enable() {
-      //	var x = document.getElementById("degree").value;
-      //	if(x > 0){
-      //	document.getElementById("room").disabled=false;
-      //}else{
-      //	document.getElementById("room").disabled=true;
-      //}
-      //}
     </script>
     <script>
       $('.no-collapsable').on('click', function(e) {

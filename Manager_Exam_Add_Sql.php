@@ -506,49 +506,60 @@ if(isset($_POST["edit_exam_annotated"])){
 }
 
 if(isset($_GET["delete_exam"])){
-			  $exam_id = $_GET["id_exam"];
-				$sql = "SELECT * FROM `manager_exam`WHERE `id` = $exam_id";
-						$result = mysqli_query($conn, $sql);
-						while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
-							$proposition_img_exam = $row['proposition_img_exam'];
-							$answer1_img_exam = $row['answer1_img_exam'];
-							$answer2_img_exam = $row['answer2_img_exam'];
-							$answer3_img_exam = $row['answer3_img_exam'];
-							$answer4_img_exam = $row['answer4_img_exam'];
-						}
-						if($proposition_img_exam!=null){unlink( "upload/".$proposition_img_exam);}
-						if($answer1_img_exam!=null){unlink( "upload/".$answer1_img_exam);}
-						if($answer2_img_exam!=null){unlink( "upload/".$answer2_img_exam);}
-						if($answer3_img_exam!=null){unlink( "upload/".$answer3_img_exam);}
-						if($answer4_img_exam!=null){unlink( "upload/".$answer4_img_exam);}
+	$exam_id = (int)$_GET["id_exam"];
+	$id_chapter = isset($_GET["id_chapter"]) ? (int)$_GET["id_chapter"] : 0;
+	
+	$sql = "SELECT * FROM `manager_exam` WHERE `id` = $exam_id";
+	$result = mysqli_query($conn, $sql);
+	if ($result && $row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+		$imgs = array(
+			$row['proposition_img_exam'],
+			$row['answer1_img_exam'],
+			$row['answer2_img_exam'],
+			$row['answer3_img_exam'],
+			$row['answer4_img_exam'],
+			$row['answer5_img_exam']
+		);
+		foreach ($imgs as $img) {
+			if (!empty($img) && file_exists("upload/" . $img)) {
+				@unlink("upload/" . $img);
+			}
+		}
+	}
 
-					$sql = "DELETE FROM `manager_exam` WHERE `manager_exam`.`id` = $exam_id";
-					if($conn->query($sql)===TRUE){
-					//header('Location: ' . $_SERVER['HTTP_REFERER']);
-					echo '<script type="text/javascript">
-							javascript:history.go(-1);
-						</script>';
-					}
+	$sql = "DELETE FROM `manager_exam` WHERE `id` = $exam_id";
+	$conn->query($sql);
 
+	if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
+		header('Location: ' . $_SERVER['HTTP_REFERER']);
+	} else {
+		header('Location: Manager_Exam_Add.php?id_chapter=' . $id_chapter);
+	}
+	exit();
 }
 
 if(isset($_GET["delete_exam_annotated"])){
-			  $exam_id = $_GET["id_exam"];
-				$sql = "SELECT * FROM `manager_exam_annotated`WHERE `id` = $exam_id";
-						$result = mysqli_query($conn, $sql);
-						while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
-							$proposition_img_exam = $row['proposition_img_exam'];
-						}
-						if($proposition_img_exam!=null){unlink( "upload/".$proposition_img_exam);}
+	$exam_id = (int)$_GET["id_exam"];
+	$id_chapter = isset($_GET["id_chapter"]) ? (int)$_GET["id_chapter"] : 0;
 
-					$sql = "DELETE FROM `manager_exam_annotated` WHERE `manager_exam_annotated`.`id` = $exam_id";
-					if($conn->query($sql)===TRUE){
-					//header('Location: ' . $_SERVER['HTTP_REFERER']);
-					echo '<script type="text/javascript">
-							javascript:history.go(-1);
-						</script>';
-					}
+	$sql = "SELECT * FROM `manager_exam_annotated` WHERE `id` = $exam_id";
+	$result = mysqli_query($conn, $sql);
+	if ($result && $row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+		$img = $row['proposition_img_exam'];
+		if (!empty($img) && file_exists("upload/" . $img)) {
+			@unlink("upload/" . $img);
+		}
+	}
 
+	$sql = "DELETE FROM `manager_exam_annotated` WHERE `id` = $exam_id";
+	$conn->query($sql);
+
+	if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
+		header('Location: ' . $_SERVER['HTTP_REFERER']);
+	} else {
+		header('Location: Manager_Exam_Add_Annotated.php?id_chapter=' . $id_chapter);
+	}
+	exit();
 }
 
 

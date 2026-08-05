@@ -97,11 +97,26 @@ if (isset($_POST["add_series_exam"])) {
 	// if($type_series == 1){
 	$id_subject = $_POST["id_subject"];
 	$type_exam = $_POST["type_exam"];
-	$branch_id_series_exam = $_POST["branch_id_series_exam"];
+	$raw_branches = isset($_POST["branch_id_series_exam"]) ? $_POST["branch_id_series_exam"] : array();
+	if (!is_array($raw_branches)) {
+		$raw_branches = array($raw_branches);
+	}
+	$branches = array_filter(array_map('intval', $raw_branches));
+
+	if (count($branches) === 0) {
+		echo AlertMsg('โปรดเลือกสาขาอย่างน้อย 1 สาขา', 2);
+		exit();
+	}
+
 	$name_series_exam = $_POST["name_series_exam"];
 	$teacher_id_series_exam = $_POST["teacher_id_series_exam"];
 	$list_series_exam = $num_exam_value;
-	$year_std_series_exam = implode(',', $_POST['year_std_series_exam']);
+	$raw_years = isset($_POST['year_std_series_exam']) ? $_POST['year_std_series_exam'] : array();
+	if (!is_array($raw_years)) {
+		$raw_years = array($raw_years);
+	}
+	$clean_years = array_unique(array_filter(array_map('trim', $raw_years)));
+	$year_std_series_exam = implode(',', $clean_years);
 
 	if ($type_exam == 1) {
 		$approve_series_exam = 1;
@@ -117,57 +132,59 @@ if (isset($_POST["add_series_exam"])) {
 		$time_status = $time_count[$i_arr];
 		if ($i_arr == 0) {
 			$datetime_start = $time_status . ":00";
-			//echo $datetime_start."<br>";
 			$datetime_startCreate = date_create($datetime_start);
 			$datetime_START = DateThai(date_format($datetime_startCreate, "Y-m-d H:i:s"));
 		} else if ($i_arr == 1) {
 			$datetime_end = $time_status . ":00";
-			//echo $datetime_end."<br>";
 			$datetime_endCreate = date_create($datetime_end);
 			$datetime_END = DateThai(date_format($datetime_endCreate, "Y-m-d H:i:s"));
-			//echo $datetime_END."<br>";
 		}
 	}
 	if ($type_series_exam1 == null && $type_series_exam2 == null) {
-		echo AlertMsg('โปรดเลือกข้อสอบมากกว่า 1 ข้อ', 2);;
+		echo AlertMsg('โปรดเลือกข้อสอบมากกว่า 1 ข้อ', 2);
 	} else {
 		if ($type_series_exam1 != null && $num_exam_value1 == null) {
 			echo AlertMsg('โปรดเลือกข้อสอบปรนัยมากกว่า 1 ข้อ', 2);
 		} else if ($type_series_exam2 != null && $num_exam_value2 == null) {
 			echo AlertMsg('โปรดเลือกข้อสอบอัตนัยมากกว่า 1 ข้อ', 2);
 		} else {
-			$sql = "INSERT INTO `manager_series_exam`
-											(`id`,
-											`id_subject_series_exam`,
-											`branch_id_series_exam`,
-											`year_std_series_exam`,
-											`name_series_exam`,
-											`type_exam`,
-											`teacher_id_series_exam`,
-											`datetime_start_series_exam`,
-											`datetime_end_series_exam`,
-											`list_series_exam`,
-											`score_series_exam`,
-											`type_series_exam`,
-											`approve_series_exam`,
-											`auto_re_series_exam`)
-											VALUES (NULL,
-											'$id_subject',
-											'$branch_id_series_exam',
-											'$year_std_series_exam',
-											'$name_series_exam',
-											'$type_exam',
-											'$teacher_id_series_exam',
-											'$datetime_START',
-											'$datetime_END',
-											'$list_series_exam',
-											'$name_score_exam',
-											'$type_series_exam',
-											'$approve_series_exam',
-											'$auto_re_series_exam')";
-			if ($conn->query($sql) === TRUE) {
-				echo AlertSuccess("บันทึกสำเร็จ", $id_subject);
-				//header('Location:Series_Exam_Subject_List.php?id_subject=' . $id_subject);
+			$success_count = 0;
+			foreach ($branches as $branch_id_series_exam) {
+				$sql = "INSERT INTO `manager_series_exam`
+												(`id`,
+												`id_subject_series_exam`,
+												`branch_id_series_exam`,
+												`year_std_series_exam`,
+												`name_series_exam`,
+												`type_exam`,
+												`teacher_id_series_exam`,
+												`datetime_start_series_exam`,
+												`datetime_end_series_exam`,
+												`list_series_exam`,
+												`score_series_exam`,
+												`type_series_exam`,
+												`approve_series_exam`,
+												`auto_re_series_exam`)
+												VALUES (NULL,
+												'$id_subject',
+												'$branch_id_series_exam',
+												'$year_std_series_exam',
+												'$name_series_exam',
+												'$type_exam',
+												'$teacher_id_series_exam',
+												'$datetime_START',
+												'$datetime_END',
+												'$list_series_exam',
+												'$name_score_exam',
+												'$type_series_exam',
+												'$approve_series_exam',
+												'$auto_re_series_exam')";
+				if ($conn->query($sql) === TRUE) {
+					$success_count++;
+				}
+			}
+			if ($success_count > 0) {
+				echo AlertSuccess("บันทึกชุดข้อสอบสำเร็จจำนวน {$success_count} สาขา", $id_subject);
 			}
 		}
 	}
@@ -242,13 +259,23 @@ else if (isset($_POST["edit_series_exam"])) {
 	// if($type_series == 1){
 	$id_series_exam = $_POST["id_series_exam"];
 	$id_subject = $_POST["id_subject"];
-	$branch_id_series_exam = $_POST["branch_id_series_exam"];
+	$raw_b_edit = isset($_POST["branch_id_series_exam"]) ? $_POST["branch_id_series_exam"] : 0;
+	if (is_array($raw_b_edit)) {
+		$branch_id_series_exam = (int)current(array_filter($raw_b_edit));
+	} else {
+		$branch_id_series_exam = (int)$raw_b_edit;
+	}
 	//$year_std_series_exam = $_POST["year_std_series_exam"];
 	$name_series_exam = $_POST["name_series_exam"];
 	$type_exam = $_POST["type_exam"];
 	$teacher_id_series_exam = $_POST["teacher_id_series_exam"];
 	$list_series_exam = $num_exam_value;
-	$year_std_series_exam = implode(',', $_POST['year_std_series_exam']);
+	$raw_years = isset($_POST['year_std_series_exam']) ? $_POST['year_std_series_exam'] : array();
+	if (!is_array($raw_years)) {
+		$raw_years = array($raw_years);
+	}
+	$clean_years = array_unique(array_filter(array_map('trim', $raw_years)));
+	$year_std_series_exam = implode(',', $clean_years);
 
 	if ($type_exam == 1) {
 		$approve_series_exam = 1;

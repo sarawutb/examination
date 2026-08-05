@@ -396,13 +396,12 @@ function DateThai($strDate)
                       <?php } ?>
                       <td>
                       <?php
-                        $year_count = explode(',',$year_std_series_exam);
-          							for ($i_arr=0; $i_arr < count($year_count); $i_arr++) {
-          							$year_count_list = $year_count[$i_arr];
+                        $year_count = array_unique(array_filter(array_map('trim', explode(',', $year_std_series_exam))));
+                        foreach ($year_count as $year_count_list) {
+                          echo $branch_name . "ห้อง " . $year_count_list . "</br>";
+                          $branch_name = "";
+                        }
                       ?>
-                      <?php
-                      echo $branch_name."ห้อง ".$year_count_list."</br>"; ?>
-                    <?php $branch_name = ""; } ?>
                     </td>
                     <td>
 					              <b>เริ่มสอบ <?php echo DateThai($Date_Time_Start)?></b><br>

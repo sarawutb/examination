@@ -109,10 +109,57 @@ if ($_SESSION['id_teacher']) {
                     <div class="card-header form-inline">
                         <i class='far'>&#xf2bb;</i>&nbsp;
                         Import CSV
-                        &nbsp;&nbsp;<a href="https://chullamanee.ac.th/examination/import_csv_std/ตัวอย่างสร้างไฟล์.zip" class="btn btn-warning">ตัวอย่างไฟล์</a>
+                        &nbsp;&nbsp;<a href="templates/ตัวอย่างสร้างไฟล์.zip" class="btn btn-warning"><i class="fas fa-download"></i> ตัวอย่างไฟล์</a>
+                        &nbsp;&nbsp;<button type="button" class="btn btn-info" data-toggle="modal" data-target="#branchModal"><i class="fas fa-list"></i> ดูรหัสสาขา</button>
                     </div>
                     <div class="card-body">
                         <?php include("Manager_Std_ImportCSV_Page.php"); ?>
+                    </div>
+                </div>
+
+                <!-- Modal ดูรหัสสาขา -->
+                <div class="modal fade" id="branchModal" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"><i class="fas fa-building"></i> รหัสสาขาวิชา</h5>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" id="dataTableBranchList" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" width="15%">ลำดับ</th>
+                                                <th class="text-center" width="25%">รหัสสาขา</th>
+                                                <th width="60%">ชื่อสาขาวิชา</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $sql_branch_modal = "SELECT * FROM `manager_branch` ORDER BY `branch_id` ASC";
+                                            $result_branch_modal = mysqli_query($conn, $sql_branch_modal);
+                                            $no_branch = 1;
+                                            if ($result_branch_modal) {
+                                                while ($row_b = mysqli_fetch_array($result_branch_modal, MYSQLI_ASSOC)) {
+                                            ?>
+                                                    <tr>
+                                                        <td class="text-center"><?php echo $no_branch++; ?></td>
+                                                        <td class="text-center"><strong><?php echo $row_b['branch_id']; ?></strong></td>
+                                                        <td><?php echo $row_b['branch_name']; ?></td>
+                                                    </tr>
+                                            <?php
+                                                }
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
