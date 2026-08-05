@@ -14,7 +14,7 @@ if(isset($_POST["add_std"])){
 
 					$name = $name_std." ".$last_std;
 
-					$sql = "SELECT * FROM `manage_std` WHERE `id_std` = $id_std AND IsUse = 1;";
+					$sql = "SELECT * FROM `manager_std` WHERE `id_std` = $id_std AND IsUse = 1;";
 					$result = mysqli_query($conn, $sql);
 					while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
 						$status = false;
@@ -33,7 +33,7 @@ if(isset($_POST["add_std"])){
 					}else{
 						//$year_std = substr($id_std,0,2);
 						$year_std = $degree_std."/".$section_std;
-						$sql = "INSERT INTO `manage_std` (`id`, `id_std`,  `year_std`, `gender_std`, `name_std`, `password_std`, `branch_id_std`, `genre_std`, `degree_std`, `section_std`)
+						$sql = "INSERT INTO `manager_std` (`id`, `id_std`,  `year_std`, `gender_std`, `name_std`, `password_std`, `branch_id_std`, `genre_std`, `degree_std`, `section_std`)
 						VALUES (NULL, '$id_std', '$year_std', '$gender_std', '$name', '$password_std', '$branch_id_std', '$genre_std', '$degree_std', '$section_std');";
 
 							if($conn->query($sql)===TRUE){
@@ -58,7 +58,7 @@ if(isset($_POST["update_std"])){
 
 					$name = $name_std." ".$last_std;
 
-					$sql = "SELECT * FROM `manage_std` WHERE `id_std` = $id_std AND IsUse = 1;";
+					$sql = "SELECT * FROM `manager_std` WHERE `id_std` = $id_std AND IsUse = 1;";
 					$result = mysqli_query($conn, $sql);
 					while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
 						$status = false;
@@ -66,7 +66,7 @@ if(isset($_POST["update_std"])){
 
 					//$year_std = substr($id_std,0,2);
 					$year_std = $degree_std."/".$section_std;
-					$sql = "UPDATE `manage_std` SET
+					$sql = "UPDATE `manager_std` SET
 					`id_std` = '$id_std',
 					`year_std` = '$year_std',
 					`gender_std` = '$gender_std',
@@ -90,7 +90,7 @@ if(isset($_POST["update_std"])){
 }
 if(isset($_GET["delete_std"])){
 					$id_std = $_GET["id"];
-					$sql = "DELETE FROM `manage_std` WHERE `manage_std`.`id` = $id_std";
+					$sql = "DELETE FROM `manager_std` WHERE `manager_std`.`id` = $id_std";
 
 				if($conn->query($sql)===TRUE){
 					//header('Location: ' . $_SERVER['HTTP_REFERER']);

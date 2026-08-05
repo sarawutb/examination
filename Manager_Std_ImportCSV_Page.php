@@ -81,7 +81,7 @@
                         <a href="#">
                             <label for="csvFileInput" class="file-input-button">เลือกไฟล์</label>
                         </a>
-                        สกุล CSV.
+                        สกุล .CSV
                     </p>
                 </div>
             </div>

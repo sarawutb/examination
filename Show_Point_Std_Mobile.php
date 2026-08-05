@@ -2,7 +2,7 @@
 include("connect.php");
 $id_std = $_GET['id_std'];
 // echo "id=".$id_std;
-$sql1 = "SELECT * FROM `manage_std` WHERE id = $id_std AND IsUse = 1;";
+$sql1 = "SELECT * FROM `manager_std` WHERE id = $id_std AND IsUse = 1;";
       $result1 = mysqli_query($conn, $sql1);
       while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
         $id_std =  $row1['id'];
@@ -52,7 +52,7 @@ if(isset($_GET["show_subject"])){
 	$id_std = $_GET['id_std'];
   if(isset($_GET["id_STD"])){
     $id_std = $_GET["id_STD"];
-    $sql1 = "SELECT * FROM `manage_std` WHERE id_std = $id_std AND IsUse = 1;";
+    $sql1 = "SELECT * FROM `manager_std` WHERE id_std = $id_std AND IsUse = 1;";
           $result1 = mysqli_query($conn, $sql1);
           while ($row1 = mysqli_fetch_array($result1,MYSQLI_ASSOC)) {
             $id_std =  $row1['id'];
@@ -133,7 +133,7 @@ $sql = "SELECT * FROM `manager_subject`WHERE `id` = $subject_id ";
 				<?php
         $sql2 = "SELECT * FROM `manager_series_exam`
             INNER JOIN result_exam_std on manager_series_exam.id = result_exam_std.id_name_series_exam
-            INNER JOIN manage_std on result_exam_std.id_std_result_exam = manage_std.id
+            INNER JOIN manager_std on result_exam_std.id_std_result_exam = manager_std.id
             WHERE result_exam_std.id_std_result_exam = $id_std AND manager_series_exam.id_subject_series_exam = $subject_id
             AND status_result_exam_std = 1
             ORDER BY `manager_series_exam`.`branch_id_series_exam` ASC, manager_series_exam.teacher_id_series_exam ASC";

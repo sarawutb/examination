@@ -169,8 +169,8 @@ session_start();
 						$ans_true = 0;
 						$sql2 = "SELECT result_exam_std.id,result_exam_std.point_result_exam,result_exam_std.id as id_series_exam_sql,manager_series_exam.list_series_exam,manager_series_exam.score_series_exam,result_exam_std.ans_result_exam FROM `result_exam_std`
                     INNER JOIN manager_series_exam on manager_series_exam.id = result_exam_std.id_name_series_exam
-                    INNER JOIN manage_std on manage_std.id = result_exam_std.id_std_result_exam
-                    WHERE manage_std.id_std = $id_std AND manager_series_exam.id = $id_series_exam";
+                    INNER JOIN manager_std on manager_std.id = result_exam_std.id_std_result_exam
+                    WHERE manager_std.id_std = $id_std AND manager_series_exam.id = $id_series_exam";
 						$result2 = mysqli_query($conn, $sql2);
 						while ($row2 = mysqli_fetch_array($result2,MYSQLI_ASSOC)){
               // echo $row2['id'];;
@@ -318,7 +318,7 @@ session_start();
 <?php
   $i = 1;
 	$sql = "SELECT * FROM `result_exam_std`
-			INNER JOIN manage_std on result_exam_std.id_std_result_exam = manage_std.id
+			INNER JOIN manager_std on result_exam_std.id_std_result_exam = manager_std.id
 			WHERE `id_name_series_exam` = 25";
 	$result = mysqli_query($conn, $sql);
 	while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {

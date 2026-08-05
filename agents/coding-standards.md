@@ -19,7 +19,7 @@
   ```
 * **การเพิ่ม/แก้ไข/ลบข้อมูล**:
   ```php
-  $sql = "INSERT INTO `manage_std` (`id_std`, `name_std`) VALUES ('$id_std', '$name_std')";
+  $sql = "INSERT INTO `manager_std` (`id_std`, `name_std`) VALUES ('$id_std', '$name_std')";
   if ($conn->query($sql) === TRUE) {
       header("Location: Manager_Std_List.php");
   }
@@ -30,7 +30,7 @@
 * **การป้องกัน SQL Injection**: โค้ดใหม่ที่เขียนเพิ่มหรือจุดที่ refactor **ควรปรับมาใช้ Prepared Statements (`mysqli_prepare`)** หรือใช้ `mysqli_real_escape_string($conn, $var)` เสมอ:
   ```php
   // ตัวอย่างการใช้ Prepared Statement กับ MySQLi
-  $stmt = mysqli_prepare($conn, "SELECT * FROM `manage_std` WHERE `id_std` = ? AND `IsUse` = ?");
+  $stmt = mysqli_prepare($conn, "SELECT * FROM `manager_std` WHERE `id_std` = ? AND `IsUse` = ?");
   mysqli_stmt_bind_param($stmt, "si", $id_std, $is_use);
   mysqli_stmt_execute($stmt);
   $result = mysqli_stmt_get_result($stmt);
@@ -50,7 +50,7 @@
 
 ### 2.2 การตั้งชื่อใน Database (Database Conventions)
 * **ชื่อตาราง (Tables)**: ใช้ **snake_case** พิมพ์เล็กทั้งหมด
-  * ตัวอย่าง: `manager_teacher`, `manage_std`, `manager_subject`, `manager_series_exam`, `manager_exam`, `result_exam_std`
+  * ตัวอย่าง: `manager_teacher`, `manager_std`, `manager_subject`, `manager_series_exam`, `manager_exam`, `result_exam_std`
 * **ชื่อคอลัมน์ (Columns)**: ใช้ **snake_case** โดยห้อยท้ายด้วยบริบทตาราง
   * ตัวอย่าง: `id_teacher`, `email_teacher`, `name_subject`, `proposition_exam`, `id_std_result_exam`
 

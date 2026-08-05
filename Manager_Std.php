@@ -233,22 +233,24 @@ if ($_SESSION['id_teacher']) {
 
         <?php
         $i = 1;
-        $sql = "SELECT * FROM `manage_std` WHERE IsUse = 1;";
+        $sql = "SELECT * FROM `manager_std` WHERE IsUse = 1;";
         $result = mysqli_query($conn, $sql);
-        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-        ?>
+        if ($result) {
+          while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+          ?>
 
-          <script>
-            function buttonDelete<?php echo $i; ?>() {
-              var result = confirm("แน่ใจว่าต้องการลบ ?");
-              if (result == true) {
-                return true;
-              } else {
-                return false;
+            <script>
+              function buttonDelete<?php echo $i; ?>() {
+                var result = confirm("แน่ใจว่าต้องการลบ ?");
+                if (result == true) {
+                  return true;
+                } else {
+                  return false;
+                }
               }
-            }
-          </script>
-        <?php $i++;
+            </script>
+          <?php $i++;
+          }
         } ?>
 
 </body>

@@ -53,8 +53,8 @@ INNER JOIN manager_subject on manager_subject.id = manager_series_exam.id_subjec
 INNER JOIN manager_branch on manager_branch.branch_id = manager_series_exam.branch_id_series_exam
 INNER JOIN manager_teacher on manager_teacher.id_teacher = manager_series_exam.teacher_id_series_exam
 INNER JOIN result_exam_std on result_exam_std.id_name_series_exam = manager_series_exam.id
-INNER JOIN manage_std on manage_std.id = result_exam_std.id_std_result_exam
-WHERE manager_series_exam.id = $id_series_exam AND manage_std.id_std = $id_std;";
+INNER JOIN manager_std on manager_std.id = result_exam_std.id_std_result_exam
+WHERE manager_series_exam.id = $id_series_exam AND manager_std.id_std = $id_std;";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {

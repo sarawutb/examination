@@ -109,9 +109,9 @@ $list_count2 = 0;
 
 
 
-// $sql2 = "SELECT DISTINCT manage_std.degree_std FROM `manager_series_exam`
+// $sql2 = "SELECT DISTINCT manager_std.degree_std FROM `manager_series_exam`
 //           INNER JOIN result_exam_std on result_exam_std.id_name_series_exam = manager_series_exam.id_subject_series_exam
-//           INNER JOIN manage_std on manage_std.id = result_exam_std.id_std_result_exam
+//           INNER JOIN manager_std on manager_std.id = result_exam_std.id_std_result_exam
 //           WHERE `id_subject_series_exam` = $id_sub_series_exam
 //           AND `branch_id_series_exam`= $branch_id;";
 // $result2 = mysqli_query($conn, $sql2);
@@ -120,12 +120,12 @@ $list_count2 = 0;
 // }
 $test = explode("/", $year_std);
 
-$sql2 = "SELECT DISTINCT manager_series_exam.`id_subject_series_exam`,manage_std.year_std FROM `manager_series_exam`
+$sql2 = "SELECT DISTINCT manager_series_exam.`id_subject_series_exam`,manager_std.year_std FROM `manager_series_exam`
           INNER JOIN result_exam_std on manager_series_exam.id = result_exam_std.id_name_series_exam
-          INNER JOIN manage_std on manage_std.id = result_exam_std.id_std_result_exam
+          INNER JOIN manager_std on manager_std.id = result_exam_std.id_std_result_exam
           WHERE `id_subject_series_exam` = $id_sub_series_exam
           AND `branch_id_series_exam`= $branch_id
-          AND manage_std.year_std LIKE '%/$test[1]%';";
+          AND manager_std.year_std LIKE '%/$test[1]%';";
 $result2 = mysqli_query($conn, $sql2);
 while ($row2 = mysqli_fetch_array($result2, MYSQLI_ASSOC)) {
   $year_std_arr =  $row2['year_std'];
@@ -258,10 +258,10 @@ $pdf->SetFont('THSarabunNew', '', 13.5);
 $num = 1;
 $total = 0;
 //for($i=1;$i<=30;$i++){
-$sql = "SELECT DISTINCT manage_std.id as std_id,manage_std.id_std,manage_std.gender_std,manage_std.name_std FROM manage_std
-                        WHERE manage_std.year_std = '$year_std_arr'
-                        AND manage_std.branch_id_std = '$branch_id'
-                        ORDER BY `manage_std`.`id_std` ASC";
+$sql = "SELECT DISTINCT manager_std.id as std_id,manager_std.id_std,manager_std.gender_std,manager_std.name_std FROM manager_std
+                        WHERE manager_std.year_std = '$year_std_arr'
+                        AND manager_std.branch_id_std = '$branch_id'
+                        ORDER BY `manager_std`.`id_std` ASC";
 $result = mysqli_query($conn, $sql);
 while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
   $id_std =  $row['id_std'];
@@ -313,9 +313,9 @@ while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
     $point_result_exam = null;
     $sql3 = "SELECT * FROM `manager_series_exam`
 								INNER JOIN result_exam_std on manager_series_exam.id = result_exam_std.id_name_series_exam
-								INNER JOIN manage_std on result_exam_std.id_std_result_exam = manage_std.id
+								INNER JOIN manager_std on result_exam_std.id_std_result_exam = manager_std.id
 								WHERE `id_subject_series_exam` = $id_sub_series_exam
-                AND manage_std.id = $std_id
+                AND manager_std.id = $std_id
                 AND manager_series_exam.id = $id";
     $result3 = mysqli_query($conn, $sql3);
     while ($row3 = mysqli_fetch_array($result3, MYSQLI_ASSOC)) {

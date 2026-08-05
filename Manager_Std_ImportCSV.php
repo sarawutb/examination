@@ -15,7 +15,7 @@ if ($_SESSION['id_teacher']) {
         $data_name_teacher_subject =  $row_teacher['name_teacher'];
     }
     //echo  $data_id_teacher;
-    if($_SESSION['status_teacher'] != 1) {
+    if ($_SESSION['status_teacher'] != 1) {
         header("location:Manager_Std.php");
     }
 } else {
@@ -80,12 +80,12 @@ if ($_SESSION['id_teacher']) {
                 </a>
             </li>
             <?php if ($status_teacher == 1) { ?>
-            <li class="nav-item">
-                <a class="nav-link" href="Manager_Teacher.php">
-                    <i class='fas'>&#xf508;</i>
-                    <span>จัดการอาจารย์</span>
-                </a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Manager_Teacher.php">
+                        <i class='fas'>&#xf508;</i>
+                        <span>จัดการอาจารย์</span>
+                    </a>
+                </li>
             <?php } ?>
         </ul>
 
@@ -107,8 +107,9 @@ if ($_SESSION['id_teacher']) {
                 <!-- DataTables Example -->
                 <div class="card mb-3">
                     <div class="card-header form-inline">
-                        <i class='far'>&#xf2bb;</i>
+                        <i class='far'>&#xf2bb;</i>&nbsp;
                         Import CSV
+                        &nbsp;&nbsp;<a href="https://chullamanee.ac.th/examination/import_csv_std/ตัวอย่างสร้างไฟล์.zip" class="btn btn-warning">ตัวอย่างไฟล์</a>
                     </div>
                     <div class="card-body">
                         <?php include("Manager_Std_ImportCSV_Page.php"); ?>

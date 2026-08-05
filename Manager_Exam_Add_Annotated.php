@@ -165,11 +165,13 @@ color: #FFF;
           <div class="card-body">
 		  <div class="row">
 		  <div class="col-sm-5">
-          <div class="card-header">
-            <i class='far'>&#xf044;</i>
-			เพิ่มข้อสอบแบบอัตนัย
-			</div>
-			<div class="card mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class='far'>&#xf044;</i> เพิ่มข้อสอบแบบอัตนัย</span>
+            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#importExcelModal">
+              <i class="fas fa-file-excel"></i> นำเข้าด้วย Excel
+            </button>
+          </div>
+          <div class="card mb-3">
           <div class="card-body">
 
 		  <form action="Manager_Exam_Add_Sql.php" id="wash" method="POST" enctype="multipart/form-data">
@@ -524,6 +526,44 @@ function all_delete()
 
 
 
+
+  <!-- Modal นำเข้าข้อสอบด้วย Excel -->
+  <div class="modal fade" id="importExcelModal" tabindex="-1" role="dialog" aria-labelledby="importExcelModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="importExcelModalLabel"><i class="fas fa-file-excel"></i> นำเข้าข้อสอบอัตนัยผ่าน Excel</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="Manager_Exam_Import_Sql.php" method="POST" enctype="multipart/form-data">
+          <div class="modal-body">
+            <input type="hidden" name="id_chapter" value="<?php echo $id_chapter; ?>">
+            <input type="hidden" name="import_type" value="annotated">
+            <div class="form-group">
+              <label><b>เลือกไฟล์ Excel (.xlsx หรือ .csv):</b></label>
+              <input type="file" name="excel_file" class="form-control-file" accept=".xlsx, .csv" required>
+              <small class="form-text text-muted mt-2">
+                *โครงสร้างคอลัมน์: A=ข้อที่, B=โจทย์คำถาม, C=แนวทางเฉลย/คำตอบ
+              </small>
+            </div>
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle"></i> ท่านสามารถดาวน์โหลดไฟล์ตัวอย่าง Template สำหรับกรอกข้อสอบได้ที่นี่:
+              <br>
+              <a href="upload/templates/exam_import_template.xlsx" class="btn btn-outline-info btn-sm mt-2" download>
+                <i class="fas fa-download"></i> ดาวน์โหลด Template Excel
+              </a>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+            <button type="submit" name="import_excel" class="btn btn-success">นำเข้าข้อมูล</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
 </body>
 

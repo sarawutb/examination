@@ -120,7 +120,7 @@ function DateThai($strDate)
 	<?php
 		$sql1 = "SELECT * FROM `manager_series_exam`
 		INNER JOIN result_exam_std on manager_series_exam.id = result_exam_std.id_name_series_exam
-		INNER JOIN manage_std on result_exam_std.id_std_result_exam = manage_std.id
+		INNER JOIN manager_std on result_exam_std.id_std_result_exam = manager_std.id
 		INNER JOIN manager_subject on manager_series_exam.id_subject_series_exam = manager_subject.id
 		WHERE result_exam_std.id_std_result_exam = $id_std AND manager_series_exam.id_subject_series_exam = $subject_id";
 		$result1 = mysqli_query($conn, $sql1);
@@ -175,7 +175,7 @@ function DateThai($strDate)
 
 						$sql1 = "SELECT * FROM `manager_series_exam`
 								INNER JOIN result_exam_std on manager_series_exam.id = result_exam_std.id_name_series_exam
-								INNER JOIN manage_std on result_exam_std.id_std_result_exam = manage_std.id
+								INNER JOIN manager_std on result_exam_std.id_std_result_exam = manager_std.id
 								WHERE result_exam_std.id_std_result_exam = $id_std AND manager_series_exam.id_subject_series_exam = $subject_id ORDER BY `manager_series_exam`.`list_series_exam` ASC";
 						$result1 = mysqli_query($conn, $sql1);
 						$number = 1;

@@ -140,7 +140,7 @@ c:/xampp/htdocs/examination/
     ```
 
 ### 5.2 การเข้าสู่ระบบของนักศึกษา (Student Web)
-* **ตารางฐานข้อมูล**: `manage_std` (เงื่อนไข `IsUse = 1`)
+* **ตารางฐานข้อมูล**: `manager_std` (เงื่อนไข `IsUse = 1`)
 * **ข้อมูลที่เก็บบันทึกใน Session**:
   * `$_SESSION['id']`: Primary key `id`
   * `$_SESSION['id_std']`: รหัสนักศึกษา (`id_std`)

@@ -224,17 +224,17 @@ if (isset($_GET["id_series_exam"])) {
                   $number = 1;
                   $ans_true = 0;
                   $i = 1;
-                  $sql2 = "SELECT manage_std.id_std,
-                    manage_std.gender_std,
-                    manage_std.name_std,
-                    manage_std.year_std,
+                  $sql2 = "SELECT manager_std.id_std,
+                    manager_std.gender_std,
+                    manager_std.name_std,
+                    manager_std.year_std,
                     result_exam_std.status_result_exam_std,
                     result_exam_std.id as id_result_exam_std,
                     result_exam_std.exam_result_exam,
                     result_exam_std.point_result_exam,
                     result_exam_std.result_result_exam
                     FROM `result_exam_std`
-                    INNER JOIN manage_std on result_exam_std.id_std_result_exam = manage_std.id
+                    INNER JOIN manager_std on result_exam_std.id_std_result_exam = manager_std.id
                     WHERE `id_name_series_exam` = $id_series_exam AND year_std = '$year_std_series_exam'";
 
                   $result2 = mysqli_query($conn, $sql2);

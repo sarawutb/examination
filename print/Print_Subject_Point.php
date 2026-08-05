@@ -107,10 +107,10 @@ $html .= '
                 $num = 1;
                 $total = 0;
 				//for($i=1;$i<=10;$i++){
-                $sql = "SELECT DISTINCT manage_std.id as std_id,manage_std.id_std,manage_std.gender_std,manage_std.name_std FROM `manager_subject`
+                $sql = "SELECT DISTINCT manager_std.id as std_id,manager_std.id_std,manager_std.gender_std,manager_std.name_std FROM `manager_subject`
 						INNER JOIN manager_series_exam on manager_series_exam.id_subject_series_exam = manager_subject.id
 						INNER JOIN result_exam_std on manager_series_exam.id = result_exam_std.id_name_series_exam
-						INNER JOIN manage_std on manage_std.id = result_exam_std.id_std_result_exam
+						INNER JOIN manager_std on manager_std.id = result_exam_std.id_std_result_exam
 						WHERE manager_subject.id = $id_sub_series_exam 
 						ORDER BY `std_id` ASC";
 						$result = mysqli_query($conn, $sql);
@@ -144,8 +144,8 @@ $html .= '
 						
 						$sql3 = "SELECT * FROM `manager_series_exam`
 								INNER JOIN result_exam_std on manager_series_exam.id = result_exam_std.id_name_series_exam 
-								INNER JOIN manage_std on result_exam_std.id_std_result_exam = manage_std.id
-								WHERE `id_subject_series_exam` = $id_sub_series_exam AND manage_std.id = $std_id AND manager_series_exam.id = $id";
+								INNER JOIN manager_std on result_exam_std.id_std_result_exam = manager_std.id
+								WHERE `id_subject_series_exam` = $id_sub_series_exam AND manager_std.id = $std_id AND manager_series_exam.id = $id";
 						$result3 = mysqli_query($conn, $sql3);
 						while($row3 = mysqli_fetch_array($result3,MYSQLI_ASSOC)){
 							$point_result_exam =  $row3['point_result_exam'];
