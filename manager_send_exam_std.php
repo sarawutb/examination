@@ -15,7 +15,7 @@
 	html{
 		background-color: black;
 	}
-</style>
+</style> 
 
 </html>
 <?php
@@ -127,7 +127,7 @@ if (isset($_POST["send_exam"])) {
 		// echo "!!!!!!".$point_sum."!!!!!!!";
 		$point = explode(",", $arr_list);
 		array_pop($point);
-		$result_point = implode($point, ",");
+		$result_point = implode(",", $point);
 	}
 	if ($List_series_exam1 != null && $List_series_exam2 != null) {
 		$result_point = $result_point . ";";
@@ -137,7 +137,7 @@ if (isset($_POST["send_exam"])) {
 		// print_r($Ans_list);
 		// echo "1";
 	} else if ($List_series_exam1 != null && $List_series_exam2 == null) {
-		$result_point = implode($point, ",");
+		$result_point = implode(",", $point);
 		$List_series_exam = $List_series_exam1;
 		$Ans_list = implode(',', $im_arr_Ans);
 		// echo "2";
