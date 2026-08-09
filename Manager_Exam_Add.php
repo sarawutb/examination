@@ -1158,7 +1158,10 @@ if (isset($_POST["id_chapter"])) {
 	              <i class="fas fa-info-circle"></i> ท่านสามารถดาวน์โหลดไฟล์ตัวอย่าง Template สำหรับพิมพ์ข้อสอบ Word ได้ที่นี่:
 	              <br>
 	              <a href="templates/exam_import_template_mc.docx" class="btn btn-warning btn-sm mt-2" download>
-	                <i class="fas fa-download"></i> ดาวน์โหลด Template Word ข้อสอบปรนัย (.docx)
+	                <i class="fas fa-download"></i> แบบพิมพ์ปกติ (.docx)
+	              </a>
+	              <a href="templates/exam_import_template_table_mc.docx" class="btn btn-warning btn-sm mt-2" download>
+	                <i class="fas fa-download"></i> แบบตาราง Table (.docx)
 	              </a>
 	            </div>
 	          </div>

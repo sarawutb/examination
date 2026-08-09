@@ -162,20 +162,20 @@ color: #FFF;
           <div class="card-header">
             <i class='far'>&#xf249;</i>
 				 <?php echo  $name_chapter; ?>
+         <div style="float: right;">
+            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#importExcelModal">
+              <i class="fas fa-file-excel"></i> นำเข้าด้วย Excel
+            </button>
+            <button type="button" class="btn btn-primary btn-sm ml-1" data-toggle="modal" data-target="#importWordModal">
+              <i class="fas fa-file-word"></i> นำเข้าด้วย Word
+          </button>
+          </div>
 		  </div>
           <div class="card-body">
 		  <div class="row">
 		  <div class="col-sm-5">
-          <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="card-header">
             <span><i class='far'>&#xf044;</i> เพิ่มข้อสอบแบบอัตนัย</span>
-            <div>
-              <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#importExcelModal">
-                <i class="fas fa-file-excel"></i> นำเข้าด้วย Excel
-              </button>
-              <button type="button" class="btn btn-primary btn-sm ml-1" data-toggle="modal" data-target="#importWordModal">
-                <i class="fas fa-file-word"></i> นำเข้าด้วย Word
-              </button>
-            </div>
           </div>
           <div class="card mb-3">
           <div class="card-body">
@@ -717,7 +717,10 @@ function all_delete()
                 <i class="fas fa-info-circle"></i> ท่านสามารถดาวน์โหลดไฟล์ตัวอย่าง Template สำหรับพิมพ์ข้อสอบ Word ได้ที่นี่:
                 <br>
                 <a href="templates/exam_import_template_annotated.docx" class="btn btn-warning btn-sm mt-2" download>
-                  <i class="fas fa-download"></i> ดาวน์โหลด Template Word ข้อสอบอัตนัย (.docx)
+                  <i class="fas fa-download"></i> แบบพิมพ์ปกติ (.docx)
+                </a>
+                <a href="templates/exam_import_template_table_annotated.docx" class="btn btn-warning btn-sm mt-2" download>
+                  <i class="fas fa-download"></i> แบบตาราง Table (.docx)
                 </a>
               </div>
             </div>
