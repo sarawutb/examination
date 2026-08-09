@@ -54,6 +54,7 @@ if (isset($_POST["id_chapter"])) {
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 <style>
@@ -163,24 +164,23 @@ if (isset($_POST["id_chapter"])) {
 					<div class="card-header">
 						<i class='far'>&#xf249;</i>
 						<?php echo $name_chapter; ?>
+						<div style="float: right;">
+							<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#importExcelModal">
+								<i class="fas fa-file-excel"></i> นำเข้าด้วย Excel
+							</button>
+							<button type="button" class="btn btn-primary btn-sm ml-1" data-toggle="modal" data-target="#importWordModal">
+								<i class="fas fa-file-word"></i> นำเข้าด้วย Word
+							</button>
+						</div>
 					</div>
 					<div class="card-body">
 						<div class="row">
 							<div class="col-sm-5">
-								<div class="card-header d-flex justify-content-between align-items-center">
+								<div class="card-header">
 									<span><i class='far'>&#xf044;</i> เพิ่มข้อสอบแบบปรนัย</span>
-									<div>
-										<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#importExcelModal">
-											<i class="fas fa-file-excel"></i> นำเข้าด้วย Excel
-										</button>
-										<button type="button" class="btn btn-primary btn-sm ml-1" data-toggle="modal" data-target="#importWordModal">
-											<i class="fas fa-file-word"></i> นำเข้าด้วย Word
-										</button>
-									</div>
 								</div>
 								<div class="card mb-3">
 									<div class="card-body">
-
 										<form action="Manager_Exam_Add_Sql.php" id="wash" method="POST"
 											enctype="multipart/form-data">
 
@@ -1090,12 +1090,22 @@ if (isset($_POST["id_chapter"])) {
 	          $('#importExcelModalDialog').removeClass('modal-lg').addClass('modal-xl');
 	          $('#importExcelModalTitle').html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบจากไฟล์ Excel ก่อนนำเข้า');
 	        } else {
-	          alert('เกิดข้อผิดพลาด: ' + res.error);
+	          Swal.fire({
+	            icon: 'error',
+	            title: 'เกิดข้อผิดพลาด',
+	            text: res.error,
+	            confirmButtonColor: '#dc3545'
+	          });
 	        }
 	      },
 	      error: function(xhr) {
 	        $('#btnCheckExcelMC').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
-	        alert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + xhr.responseText);
+	        Swal.fire({
+	          icon: 'error',
+	          title: 'เกิดข้อผิดพลาดในการส่งข้อมูล',
+	          text: xhr.responseText || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้',
+	          confirmButtonColor: '#dc3545'
+	        });
 	      }
 	    });
 	  });

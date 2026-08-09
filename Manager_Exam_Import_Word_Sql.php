@@ -10,10 +10,31 @@ require_once("vendor/word_parser/WordReaderHelper.php");
 
 function AlertMsgWord($msg, $type)
 {
+    $swal_cdn = "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
     if ($type == 1) {
-        return "<script>alert('" . $msg . "');</script>";
+        return $swal_cdn . "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'แจ้งเตือน',
+                    text: '" . addslashes($msg) . "',
+                    confirmButtonColor: '#007bff'
+                });
+            });
+        </script>";
     } else {
-        return "<script>alert('" . $msg . "'); window.history.back();</script>";
+        return $swal_cdn . "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'แจ้งเตือน',
+                    text: '" . addslashes($msg) . "',
+                    confirmButtonColor: '#007bff'
+                }).then(function() {
+                    window.history.back();
+                });
+            });
+        </script>";
     }
 }
 
@@ -58,9 +79,18 @@ if (isset($_POST['confirm_import_word'])) {
             mysqli_stmt_close($stmt);
         }
 
-        echo "<script>
-                alert('นำเข้าข้อสอบอัตนัยสำเร็จจำนวน " . $inserted_count . " ข้อ');
-                window.location.href = 'Manager_Exam_Add_Annotated.php?id_chapter=" . $id_chapter . "';
+        echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'นำเข้าข้อมูลสำเร็จ',
+                        text: 'นำเข้าข้อสอบอัตนัยสำเร็จจำนวน " . $inserted_count . " ข้อ',
+                        confirmButtonColor: '#28a745'
+                    }).then(function() {
+                        window.location.href = 'Manager_Exam_Add_Annotated.php?id_chapter=" . $id_chapter . "';
+                    });
+                });
               </script>";
         exit();
 
@@ -90,9 +120,18 @@ if (isset($_POST['confirm_import_word'])) {
             mysqli_stmt_close($stmt);
         }
 
-        echo "<script>
-                alert('นำเข้าข้อสอบปรนัยสำเร็จจำนวน " . $inserted_count . " ข้อ');
-                window.location.href = 'Manager_Exam_Add.php?id_chapter=" . $id_chapter . "';
+        echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'นำเข้าข้อมูลสำเร็จ',
+                        text: 'นำเข้าข้อสอบปรนัยสำเร็จจำนวน " . $inserted_count . " ข้อ',
+                        confirmButtonColor: '#28a745'
+                    }).then(function() {
+                        window.location.href = 'Manager_Exam_Add.php?id_chapter=" . $id_chapter . "';
+                    });
+                });
               </script>";
         exit();
     }

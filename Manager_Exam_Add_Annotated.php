@@ -54,6 +54,7 @@ if(isset($_POST["id_chapter"])){
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 <style>
@@ -648,12 +649,22 @@ function all_delete()
             $('#importExcelModalDialog').removeClass('modal-lg').addClass('modal-xl');
             $('#importExcelModalTitle').html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบจากไฟล์ Excel ก่อนนำเข้า');
           } else {
-            alert('เกิดข้อผิดพลาด: ' + res.error);
+            Swal.fire({
+              icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
+              text: res.error,
+              confirmButtonColor: '#dc3545'
+            });
           }
         },
         error: function(xhr) {
           $('#btnCheckExcelAnnotated').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
-          alert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + xhr.responseText);
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาดในการส่งข้อมูล',
+            text: xhr.responseText || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้',
+            confirmButtonColor: '#dc3545'
+          });
         }
       });
     });
@@ -776,12 +787,22 @@ function all_delete()
             $('#importWordModalDialog').removeClass('modal-lg').addClass('modal-xl');
             $('#importWordModalTitle').html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบจากไฟล์ Word ก่อนนำเข้า');
           } else {
-            alert('เกิดข้อผิดพลาด: ' + res.error);
+            Swal.fire({
+              icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
+              text: res.error,
+              confirmButtonColor: '#dc3545'
+            });
           }
         },
         error: function(xhr) {
           $('#btnCheckWordAnnotated').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
-          alert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + xhr.responseText);
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาดในการส่งข้อมูล',
+            text: xhr.responseText || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้',
+            confirmButtonColor: '#dc3545'
+          });
         }
       });
     });
