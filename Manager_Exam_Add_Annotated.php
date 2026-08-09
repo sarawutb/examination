@@ -583,7 +583,7 @@ function all_delete()
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-              <button type="submit" id="btnCheckExcelAnnotated" class="btn btn-success"><i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า</button>
+              <button type="submit" id="btnCheckExcelAnnotated" class="btn btn-success" disabled><i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า</button>
             </div>
           </form>
         </div>
@@ -602,8 +602,10 @@ function all_delete()
     if (input.files && input.files[0]) {
       document.getElementById('fileNameAnnotated').innerText = 'ไฟล์ที่เลือก: ' + input.files[0].name;
       document.getElementById('nameFileAnnotated').style.display = 'block';
+      $('#btnCheckExcelAnnotated').prop('disabled', false);
     } else {
       document.getElementById('nameFileAnnotated').style.display = 'none';
+      $('#btnCheckExcelAnnotated').prop('disabled', true);
     }
   }
 
@@ -615,7 +617,7 @@ function all_delete()
     $('#excelFileInputAnnotated').val('');
     $('#fileNameAnnotated').text('');
     $('#nameFileAnnotated').hide();
-    $('#btnCheckExcelAnnotated').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
+    $('#btnCheckExcelAnnotated').prop('disabled', true).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
   }
 
   $(document).ready(function() {
@@ -721,7 +723,7 @@ function all_delete()
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-              <button type="submit" id="btnCheckWordAnnotated" class="btn btn-primary"><i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า</button>
+              <button type="submit" id="btnCheckWordAnnotated" class="btn btn-primary" disabled><i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า</button>
             </div>
           </form>
         </div>
@@ -740,8 +742,10 @@ function all_delete()
     if (input.files && input.files[0]) {
       document.getElementById('fileNameWordAnnotated').innerText = 'ไฟล์ที่เลือก: ' + input.files[0].name;
       document.getElementById('nameFileWordAnnotated').style.display = 'block';
+      $('#btnCheckWordAnnotated').prop('disabled', false);
     } else {
       document.getElementById('nameFileWordAnnotated').style.display = 'none';
+      $('#btnCheckWordAnnotated').prop('disabled', true);
     }
   }
 
@@ -753,7 +757,7 @@ function all_delete()
     $('#wordFileInputAnnotated').val('');
     $('#fileNameWordAnnotated').text('');
     $('#nameFileWordAnnotated').hide();
-    $('#btnCheckWordAnnotated').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
+    $('#btnCheckWordAnnotated').prop('disabled', true).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
   }
 
   $(document).ready(function() {

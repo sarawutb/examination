@@ -1024,7 +1024,7 @@ if (isset($_POST["id_chapter"])) {
 	          </div>
 	          <div class="modal-footer">
 	            <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-	            <button type="submit" id="btnCheckExcelMC" class="btn btn-success"><i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า</button>
+	            <button type="submit" id="btnCheckExcelMC" class="btn btn-success" disabled><i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า</button>
 	          </div>
 	        </form>
 	      </div>
@@ -1043,8 +1043,10 @@ if (isset($_POST["id_chapter"])) {
 	  if (input.files && input.files[0]) {
 	    document.getElementById('fileNameMC').innerText = 'ไฟล์ที่เลือก: ' + input.files[0].name;
 	    document.getElementById('nameFileMC').style.display = 'block';
+	    $('#btnCheckExcelMC').prop('disabled', false);
 	  } else {
 	    document.getElementById('nameFileMC').style.display = 'none';
+	    $('#btnCheckExcelMC').prop('disabled', true);
 	  }
 	}
 
@@ -1056,7 +1058,7 @@ if (isset($_POST["id_chapter"])) {
 	  $('#excelFileInputMC').val('');
 	  $('#fileNameMC').text('');
 	  $('#nameFileMC').hide();
-	  $('#btnCheckExcelMC').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
+	  $('#btnCheckExcelMC').prop('disabled', true).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
 	}
 
 	$(document).ready(function() {
@@ -1162,7 +1164,7 @@ if (isset($_POST["id_chapter"])) {
 	          </div>
 	          <div class="modal-footer">
 	            <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-	            <button type="submit" id="btnCheckWordMC" class="btn btn-primary"><i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า</button>
+	            <button type="submit" id="btnCheckWordMC" class="btn btn-primary" disabled><i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า</button>
 	          </div>
 	        </form>
 	      </div>
@@ -1180,8 +1182,10 @@ if (isset($_POST["id_chapter"])) {
 	  if (input.files && input.files[0]) {
 	    document.getElementById('fileNameWordMC').innerText = 'ไฟล์ที่เลือก: ' + input.files[0].name;
 	    document.getElementById('nameFileWordMC').style.display = 'block';
+	    $('#btnCheckWordMC').prop('disabled', false);
 	  } else {
 	    document.getElementById('nameFileWordMC').style.display = 'none';
+	    $('#btnCheckWordMC').prop('disabled', true);
 	  }
 	}
 
@@ -1193,7 +1197,7 @@ if (isset($_POST["id_chapter"])) {
 	  $('#wordFileInputMC').val('');
 	  $('#fileNameWordMC').text('');
 	  $('#nameFileWordMC').hide();
-	  $('#btnCheckWordMC').prop('disabled', false).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
+	  $('#btnCheckWordMC').prop('disabled', true).html('<i class="fas fa-search"></i> ตรวจสอบข้อสอบก่อนนำเข้า');
 	}
 
 	$(document).ready(function() {

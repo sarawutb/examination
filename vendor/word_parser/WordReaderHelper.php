@@ -142,16 +142,17 @@ class WordReaderHelper
         $questions = array();
         $currentQuestion = null;
 
-        $q_pattern   = '/^(?:ข้อ\s*)?(\d+)[\.\)]\s*(.+)/u';
-        // Match choices starting with letters (ก., ก), a., a)) or numbers with parenthesis (1), 1), (1))
-        $c_pattern   = '/^(?:[\(\[]?([ก-จa-eA-E])[\.\)\]]|([1-5])[\)]|\(([1-5])\))\s*(.+)/u';
+        // Matches: "1. text", "1) text", "1 text", "ข้อ 1. text", "ข้อ 1) text", "ข้อ 1 text"
+        $q_pattern   = '/^(?:ข้อ\s*)?(\d+)(?:[\.\)]\s*|\s+)(.+)/u';
+        // Match choices starting with letters (ก., ก), a., a)) or numbers with parenthesis (1), 1), (1)) or dots 1., 2.
+        $c_pattern   = '/^(?:[\(\[]?([ก-จa-eA-E])[\.\)\]]|([1-5])[\.\)]|\(([1-5])\))\s*(.+)/u';
         $ans_pattern = '/^(?:เฉลย|เฉลยคำตอบ|ตอบ)\s*[:\s=]\s*(.+)/u';
 
         foreach ($paragraphs as $line) {
             $line = trim($line);
             if ($line === '') continue;
 
-            // 1. Check Answer pattern
+            // 1. Check Answer pattern (if we are currently reading a question)
             if ($currentQuestion !== null && preg_match($ans_pattern, $line, $matches)) {
                 $rawAns = trim($matches[1]);
                 $currentQuestion['result_raw'] = $rawAns;
@@ -159,12 +160,13 @@ class WordReaderHelper
                 continue;
             }
 
-            // 2. Check Choice pattern
+            // 2. Check Choice pattern (if we are currently reading a question and slot is available)
             if ($currentQuestion !== null && preg_match($c_pattern, $line, $matches)) {
                 $rawKey = !empty($matches[1]) ? $matches[1] : (!empty($matches[2]) ? $matches[2] : $matches[3]);
                 $choiceKey = self::normalizeChoiceKey($rawKey);
                 $choiceText = trim($matches[4]);
-                if ($choiceKey >= 1 && $choiceKey <= 5) {
+                // Only register as choice if choice key is 1..5, that specific slot is empty, and we haven't reached answer line yet
+                if ($choiceKey >= 1 && $choiceKey <= 5 && empty($currentQuestion['answer' . $choiceKey]) && empty($currentQuestion['result_raw'])) {
                     $currentQuestion['answer' . $choiceKey] = $choiceText;
                     $currentQuestion['choices_count']++;
                     continue;
@@ -191,19 +193,8 @@ class WordReaderHelper
                 continue;
             }
 
+            // Must have matched a question header line first; skip title/header lines before question 1
             if ($currentQuestion === null) {
-                $currentQuestion = array(
-                    'num' => count($questions) + 1,
-                    'proposition' => $line,
-                    'answer1' => '',
-                    'answer2' => '',
-                    'answer3' => '',
-                    'answer4' => '',
-                    'answer5' => '',
-                    'result'  => 0,
-                    'result_raw' => '',
-                    'choices_count' => 0
-                );
                 continue;
             }
 
@@ -228,17 +219,13 @@ class WordReaderHelper
         $questions = array();
         $currentQuestion = null;
 
-        $q_pattern   = '/^(?:ข้อ\s*)?(\d+)[\.\)]\s*(.+)/u';
+        // Matches: "1. text", "1) text", "1 text", "ข้อ 1. text", "ข้อ 1) text", "ข้อ 1 text"
+        $q_pattern   = '/^(?:ข้อ\s*)?(\d+)(?:[\.\)]\s*|\s+)(.+)/u';
         $ans_pattern = '/^(?:เฉลย|แนวตอบ|ตอบ)\s*[:\s=]\s*(.+)/u';
 
         foreach ($paragraphs as $line) {
             $line = trim($line);
             if ($line === '') continue;
-
-            if ($currentQuestion !== null && preg_match($ans_pattern, $line, $matches)) {
-                $currentQuestion['ans'] = trim($matches[1]);
-                continue;
-            }
 
             if (preg_match($q_pattern, $line, $matches)) {
                 if ($currentQuestion !== null && !empty($currentQuestion['proposition'])) {
@@ -249,6 +236,16 @@ class WordReaderHelper
                     'proposition' => trim($matches[2]),
                     'ans' => ''
                 );
+                continue;
+            }
+
+            // Must have matched a question header line first; skip title/header lines before question 1
+            if ($currentQuestion === null) {
+                continue;
+            }
+
+            if (preg_match($ans_pattern, $line, $matches)) {
+                $currentQuestion['ans'] = trim($matches[1]);
                 continue;
             }
 
