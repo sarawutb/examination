@@ -94,7 +94,7 @@ class WordReaderHelper
     }
 
     /**
-     * Get concatenated text from a DOM node
+     * Get concatenated text from a DOM node (supports soft line breaks <w:br/>)
      */
     private static function getNodeText($node)
     {
@@ -103,6 +103,8 @@ class WordReaderHelper
             foreach ($node->childNodes as $child) {
                 if ($child->nodeName === 'w:t') {
                     $text .= $child->nodeValue;
+                } else if ($child->nodeName === 'w:br') {
+                    $text .= "\n";
                 } else if ($child->hasChildNodes()) {
                     $text .= self::getNodeText($child);
                 }
@@ -112,7 +114,7 @@ class WordReaderHelper
     }
 
     /**
-     * Parse a w:tbl node into 2D array
+     * Parse a w:tbl node into 2D array preserving multiline text inside cells
      */
     private static function parseTableNode($tblNode)
     {
@@ -122,7 +124,7 @@ class WordReaderHelper
                 $row = array();
                 foreach ($tr->childNodes as $tc) {
                     if ($tc->nodeName === 'w:tc') {
-                        $cellText = trim(self::getNodeText($tc));
+                        $cellText = self::getTableCellText($tc);
                         $row[] = $cellText;
                     }
                 }
@@ -132,6 +134,26 @@ class WordReaderHelper
             }
         }
         return $rows;
+    }
+
+    /**
+     * Get cell text from w:tc node joining paragraphs with line breaks
+     */
+    private static function getTableCellText($tcNode)
+    {
+        $lines = array();
+        foreach ($tcNode->childNodes as $child) {
+            if ($child->nodeName === 'w:p') {
+                $pText = trim(self::getNodeText($child));
+                if ($pText !== '') {
+                    $lines[] = $pText;
+                }
+            }
+        }
+        if (!empty($lines)) {
+            return implode("\n", $lines);
+        }
+        return trim(self::getNodeText($tcNode));
     }
 
     /**
@@ -221,13 +243,44 @@ class WordReaderHelper
 
         // Matches: "1. text", "1) text", "1 text", "ข้อ 1. text", "ข้อ 1) text", "ข้อ 1 text"
         $q_pattern   = '/^(?:ข้อ\s*)?(\d+)(?:[\.\)]\s*|\s+)(.+)/u';
-        $ans_pattern = '/^(?:เฉลย|แนวตอบ|ตอบ)\s*[:\s=]\s*(.+)/u';
+        $ans_pattern = '/^(?:เฉลย|แนวตอบ|ตอบ)\s*[:\s=]?\s*(.*)/u';
 
         foreach ($paragraphs as $line) {
             $line = trim($line);
             if ($line === '') continue;
 
+            // 1. Check if line starts an Answer (ตอบ: / เฉลย:)
+            if ($currentQuestion !== null && preg_match($ans_pattern, $line, $matches)) {
+                $ansText = trim($matches[1]);
+                if (empty($currentQuestion['ans'])) {
+                    $currentQuestion['ans'] = $ansText;
+                } else {
+                    $currentQuestion['ans'] .= "\n" . $line;
+                }
+                continue;
+            }
+
+            // 2. Check Question Header pattern
             if (preg_match($q_pattern, $line, $matches)) {
+                // If answer has already started for current question, check if this line is truly a new question header
+                if ($currentQuestion !== null && !empty($currentQuestion['ans'])) {
+                    $isNewQuestion = preg_match('/^ข้อ\s*\d+/u', $line) || 
+                                     preg_match('/^(?:ข้อ\s*)?(\d+)(?:[\.\)]\s*|\s+)(?:จง|อะไร|อย่างไร|เพราะเหตุใด|โปรด|หมายถึง|คือ|บอก|อธิบาย|ยกตัวอย่าง|ให้อธิบาย|จงอธิบาย|จงบอก|จงยกตัวอย่าง)/u', $line);
+                    if ($isNewQuestion) {
+                        $questions[] = self::validateSubjectiveQuestion($currentQuestion);
+                        $currentQuestion = array(
+                            'num' => $matches[1],
+                            'proposition' => trim($matches[2]),
+                            'ans' => ''
+                        );
+                        continue;
+                    } else {
+                        // Sub-items inside answer (e.g., "1. CPU", "2. RAM") append to answer
+                        $currentQuestion['ans'] .= "\n" . $line;
+                        continue;
+                    }
+                }
+
                 if ($currentQuestion !== null && !empty($currentQuestion['proposition'])) {
                     $questions[] = self::validateSubjectiveQuestion($currentQuestion);
                 }
@@ -244,17 +297,10 @@ class WordReaderHelper
                 continue;
             }
 
-            if (preg_match($ans_pattern, $line, $matches)) {
-                $currentQuestion['ans'] = trim($matches[1]);
-                continue;
-            }
-
-            if ($currentQuestion !== null) {
-                if (empty($currentQuestion['ans'])) {
-                    $currentQuestion['proposition'] .= "\n" . $line;
-                } else {
-                    $currentQuestion['ans'] .= "\n" . $line;
-                }
+            if (empty($currentQuestion['ans'])) {
+                $currentQuestion['proposition'] .= "\n" . $line;
+            } else {
+                $currentQuestion['ans'] .= "\n" . $line;
             }
         }
 
